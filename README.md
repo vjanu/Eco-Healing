@@ -1,6 +1,6 @@
 # eco_healing1
 
-A new Flutter project called eco-healing we the best music.
+A new Flutter project.
 
 ## Getting Started
 
