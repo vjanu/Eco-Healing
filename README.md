@@ -1,6 +1,6 @@
 # eco_healing1
 
-A new Flutter project.
+A new Flutter project called eco-healing
 
 ## Getting Started
 
