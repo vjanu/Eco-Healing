@@ -1,4 +1,4 @@
-# eco_healing1
+# eco_healing_dummy
 
 A new Flutter project.
 
