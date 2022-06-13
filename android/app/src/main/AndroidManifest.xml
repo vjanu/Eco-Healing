@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.eco_healing">
+    package="com.example.eco_healing_dummy">
    <application
-        android:label="eco_healing"
+        android:label="eco_healing_dummy"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
