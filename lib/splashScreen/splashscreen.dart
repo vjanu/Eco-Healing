@@ -14,7 +14,7 @@ class _MySplashScreenState extends State<MySplashScreen> {
 
   startTimer()
   {
-    Timer(const Duration(seconds:6), () async{
+    Timer(const Duration(seconds:4), () async{
       Navigator.push(context, MaterialPageRoute(builder:(c)=>const AuthScreen()));
     });
   }
@@ -34,7 +34,7 @@ class _MySplashScreenState extends State<MySplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children:[
             Image.asset(
-              "images/ecohealing.png",
+             "images/ecohealing.png",
                 scale: 0.5
             ),
             const SizedBox(height:15,),
