@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "265810927739",
+    "project_id": "eco-healing",
+    "storage_bucket": "eco-healing.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:265810927739:android:6ac01ea37226121f0f42de",
+        "android_client_info": {
+          "package_name": "com.example.eco_healing"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "265810927739-0s2u4efi9bkdlfvbucf08eeejujdarhk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdlEWXH6SZAroHtq3t8CWlFrkqgQdd5iQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "265810927739-0s2u4efi9bkdlfvbucf08eeejujdarhk.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "265810927739-a5mrti1hd80u2jd66s9r6os0rqr8pcmj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.ecoHealing"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
