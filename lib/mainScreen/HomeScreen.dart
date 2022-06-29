@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:eco_healing/add_items/add_food_items.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import '../add_cnt/add_cloth.dart';
+import '../add_cnt/add_tech.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -55,6 +57,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 backgroundColor: Colors.lightGreen,
                 onTap: (){
                   print('Cloth Button Selected');
+                  Navigator.push(context, MaterialPageRoute(builder: (c)=>const Add_cloth()));
+
                 }
             ),
             SpeedDialChild(
@@ -63,6 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 backgroundColor: Colors.lightGreen,
                 onTap: (){
                   print('Electoric  Selected');
+                  Navigator.push(context, MaterialPageRoute(builder: (c)=>const Add_tech()));
                 }
             )
           ],
