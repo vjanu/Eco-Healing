@@ -26,8 +26,9 @@ class _login_pageState extends State<login_page> {
             child: Padding(
               padding: EdgeInsets.all(15),
               child: Image.asset(
-                "images/healinghands.jpeg",//"images/loginpage.png",
-                height:270,
+
+                "images/earth-day.png", //"images/loginpage.png",
+                height: 270,
               ),
             ),
           ),
