@@ -1,4 +1,7 @@
+import 'package:eco_healing/auth/login.dart';
+import 'package:eco_healing/mainScreen/HomeScreen.dart';
 import 'package:eco_healing/splashScreen/splashscreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -21,6 +24,15 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: const MySplashScreen(),
+      // home: StreamBuilder(
+      //   stream: FirebaseAuth.instance.authStateChanges(),
+      //   builder: (ctx, userSnapshot) {
+      //     if (userSnapshot.hasData) {
+      //       return HomeScreen();
+      //     }
+      //     return login_page();
+      //   },
+      // ),
     );
   }
 }

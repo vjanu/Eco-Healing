@@ -1,6 +1,10 @@
 import 'dart:async';
 import 'package:eco_healing/auth/auth_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:eco_healing/mainScreen/HomeScreen.dart';
+
+import '../global/global.dart';
 
 class MySplashScreen extends StatefulWidget {
   const MySplashScreen({Key? key}) : super(key: key);
@@ -12,8 +16,15 @@ class MySplashScreen extends StatefulWidget {
 class _MySplashScreenState extends State<MySplashScreen> {
   startTimer() {
     Timer(const Duration(seconds: 4), () async {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (c) => const AuthScreen()));
+      // Navigator.push(
+      //     context, MaterialPageRoute(builder: (c) => const AuthScreen()));
+      if (firebaseAuth.currentUser != null) {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (c) => const HomeScreen()));
+      } else {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (c) => const AuthScreen()));
+      }
     });
   }
 
@@ -25,7 +36,7 @@ class _MySplashScreenState extends State<MySplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return Material(
       child: Container(
         color: Colors.green,
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
