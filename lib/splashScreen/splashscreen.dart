@@ -9,42 +9,32 @@ class MySplashScreen extends StatefulWidget {
   State<MySplashScreen> createState() => _MySplashScreenState();
 }
 
-
 class _MySplashScreenState extends State<MySplashScreen> {
-
-  startTimer()
-  {
-    Timer(const Duration(seconds:4), () async{
-      Navigator.push(context, MaterialPageRoute(builder:(c)=>const AuthScreen()));
+  startTimer() {
+    Timer(const Duration(seconds: 4), () async {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (c) => const AuthScreen()));
     });
   }
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     startTimer();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child:Container(
-        color:Colors.green,
-        child:Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children:[
-            Image.asset(
-             "images/ecohealing.png",
-                scale: 0.5
-            ),
-            const SizedBox(height:15,),
-
-          ]
-        ),
+    return SingleChildScrollView(
+      child: Container(
+        color: Colors.green,
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Image.asset("images/ecohealing.png", scale: 0.5),
+          const SizedBox(
+            height: 15,
+          ),
+        ]),
       ),
-
-
     );
   }
 }
-
