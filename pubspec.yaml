@@ -41,6 +41,7 @@ dependencies:
   firebase_storage: ^10.2.17
   shared_preferences: ^2.0.15
   flutter_speed_dial:
+  file_picker: ^4.6.1
 
 dev_dependencies:
   flutter_test:
