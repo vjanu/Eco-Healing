@@ -1,15 +1,15 @@
-class Clothitems {
+class Electronicitems {
   String? name;
   String? address;
   String? cost;
 
-  Clothitems({
+  Electronicitems({
     this.name,
     this.address,
     this.cost,
   });
 
-  static Clothitems fromJSON(Map<String, dynamic> json) => Clothitems(
+  static Electronicitems fromJSON(Map<String, dynamic> json) => Electronicitems(
         name: json["name"],
         address: json["address"],
         cost: json["cost"],
