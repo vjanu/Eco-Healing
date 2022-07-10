@@ -106,12 +106,12 @@ class _add_clothState extends State<add_cloth> {
               decoration: const BoxDecoration(
             color: Colors.black,
           )),
-          title: const Text("Client Form"),
+          title: const Text("Add Cloting Items"),
           centerTitle: true,
           automaticallyImplyLeading: true,
           titleTextStyle: const TextStyle(
             color: Colors.white,
-            fontSize: 35,
+            fontSize: 25,
             fontFamily: "Signatra",
             letterSpacing: 3,
           ),
@@ -203,7 +203,7 @@ class _add_clothState extends State<add_cloth> {
         },
         decoration: InputDecoration(
             hintText: 'Name',
-            labelText: 'Client Name',
+            labelText: 'Item Name',
             border: const OutlineInputBorder(),
             suffixIcon: nameController.text.isEmpty
                 ? Container(
@@ -227,7 +227,7 @@ class _add_clothState extends State<add_cloth> {
         },
         decoration: InputDecoration(
             hintText: 'Address',
-            labelText: 'Client Address',
+            labelText: 'Address',
             border: const OutlineInputBorder(),
             suffixIcon: addressController.text.isEmpty
                 ? Container(width: 0)

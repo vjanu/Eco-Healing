@@ -5,6 +5,7 @@ import 'package:eco_healing/add_items/add_food_items.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import '../Models/FoodItems.dart';
 import '../Models/ClothItems.dart';
+import '../Widget/my_drawer.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -32,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
           title: const Text("Welcome"),
           backgroundColor: Colors.lightGreen,
         ),
+        drawer: MyDrawer(),
         body: StreamBuilder<List<Clothitems>>(
           stream: readClothitems(),
           builder: (context, snapshot) {
