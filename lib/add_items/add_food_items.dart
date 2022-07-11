@@ -1,7 +1,15 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:image_picker/image_picker.dart';
+import '../Widget/error_dialog.dart';
+import '../Widget/progress_bar.dart';
+import '../global/global.dart';
 import '../mainScreen/HomeScreen.dart';
+import 'package:firebase_storage/firebase_storage.dart' as storageRef;
+
 
 class AddFood_itmes extends StatefulWidget {
   const AddFood_itmes({Key? key}) : super(key: key);
@@ -11,6 +19,53 @@ class AddFood_itmes extends StatefulWidget {
 }
 
 class _AddFood_itmesState extends State<AddFood_itmes> {
+
+  // Image Picker Handler
+  XFile? imageXFile;
+  final ImagePicker _picker = ImagePicker();
+
+  TextEditingController shortInfoController = TextEditingController();
+  TextEditingController titleController = TextEditingController();
+
+  bool uploading = false;
+  String uniqueIdName = DateTime.now().millisecondsSinceEpoch.toString();
+
+  // Image Uploading
+  uploadImage(nImageFile) async {
+    storageRef.Reference reference = storageRef.FirebaseStorage
+        .instance
+        .ref()
+        .child("foods");
+
+    storageRef.UploadTask uploadTask = reference.child(uniqueIdName + ".jpg").putFile(nImageFile);
+
+    storageRef.TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
+
+    String downloadURL = await taskSnapshot.ref.getDownloadURL();
+
+    return downloadURL;
+  }
+
+  saveInfo(String downloadUrl) {
+    final ref = FirebaseFirestore.instance.collection("food");
+
+    ref.doc(uniqueIdName).set({
+      "menuID": uniqueIdName,
+      // "sellerUID": sharedPreferences!.getString("uid"),
+      "menuInfo": shortInfoController.text.toString(),
+      "menuTitle": titleController.text.toString(),
+      "publishedDate": DateTime.now(),
+      "status": "available",
+      "thumbnailUrl": downloadUrl,
+    });
+
+    Clear_menu_upload_form();
+
+    setState(() {
+      uniqueIdName = DateTime.now().millisecondsSinceEpoch.toString();
+      uploading = false;
+    });
+  }
 
   // Image Taker
   takeImage(nContext){
@@ -82,23 +137,187 @@ class _AddFood_itmesState extends State<AddFood_itmes> {
   }
   // Add Items
   menusUploadFormScreen(){
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Upload Food Item Menu"),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.green,
+                  Colors.greenAccent,
+                ],
+                begin: FractionalOffset(0.0,0.0),
+                end: FractionalOffset(1.0, 0.0),
+                stops: [0.0, 1.0],
+                tileMode: TileMode.clamp,
+              )
+          ),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white,),
+          onPressed: ()
+          {
+            Clear_menu_upload_form();
+          },
+        ),
+      ),
+      body: ListView(
+        children: [
+          uploading == true ? linearProgress() : const Text(""),
+          Container(
+            height: 230,
+            width: MediaQuery.of(context).size.width * 0.8,
+            child: Center(
+               child: AspectRatio(
+                 aspectRatio: 16/9,
+                 child: Container(
+                   decoration: BoxDecoration(
+                     image: DecorationImage(
+                       image: FileImage(
+                         File(imageXFile!.path)
+                       ),
+                       fit: BoxFit.cover,
+                     ),
+                   ),
+                 ),
+               ),
+            ),
+          ),
+          Divider(
+            color: Colors.green,
+            thickness: 2,
+          ),
+          ListTile(
+            leading: const Icon(
+              Icons.perm_device_information,
+              color: Colors.green,
+            ),
+            title: Container(
+              width: 250,
+              child: TextField(
+                style: const TextStyle(color: Colors.black54),
+                controller: shortInfoController,
+                decoration: const InputDecoration(
+                  hintText: "Menu Info",
+                  hintStyle: TextStyle(color: Colors.grey),
+                  border: InputBorder.none,
+                ),
+              ),
 
+            ),
+          ),
+          Divider(
+            color: Colors.green,
+            thickness: 2,
+          ),
+          ListTile(
+            leading: const Icon(
+              Icons.title,
+              color: Colors.green,
+            ),
+            title: Container(
+              width: 250,
+              child: TextField(
+                style: const TextStyle(color: Colors.black54),
+                controller: titleController,
+                decoration: const InputDecoration(
+                  hintText: "Menu Title",
+                  hintStyle: TextStyle(color: Colors.grey),
+                  border: InputBorder.none,
+                ),
+              ),
+
+            ),
+          ),
+          Divider(
+            color: Colors.green,
+            thickness: 2,
+          ),
+          ElevatedButton(
+            child: const Text(
+              "Add Item",
+              style: TextStyle(
+                color: Colors.black54,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                fontFamily: "Lobster",
+                letterSpacing: 3,
+              ),
+            ),
+            style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.green),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    )
+                )
+            ),
+            onPressed: uploading ? null : ()=> validateUploadForm(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Clear_menu_upload_form(){
+    setState(() {
+      shortInfoController.clear();
+      titleController.clear();
+      imageXFile = null;
+    });
+  }
+
+  validateUploadForm() async {
+    setState(() {
+      uploading = true;
+    });
+
+    if(imageXFile != null)
+    {
+      if(shortInfoController.text.isNotEmpty && titleController.text.isNotEmpty)
+      {
+        setState(() {
+          uploading = true;
+        });
+
+        //upload image
+        String downloadUrl = await uploadImage(File(imageXFile!.path));
+
+        //save info to firestore
+        saveInfo(downloadUrl);
+      }
+      else
+      {
+        showDialog(
+            context: context,
+            builder: (c)
+            {
+              return ErrorDialog(
+                message: "Please write title and info for menu.",
+              );
+            }
+        );
+      }
+    }
+    else
+    {
+      showDialog(
+          context: context,
+          builder: (c)
+          {
+            return ErrorDialog(
+              message: "Please pick an image for menu.",
+            );
+          }
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return imageXFile == null ? defaultScreen() : menusUploadFormScreen();
   }
-
-  // Image Picker Handler
-  XFile? imageXFile;
-  final ImagePicker _picker = ImagePicker();
-
-  TextEditingController shortInfoController = TextEditingController();
-  TextEditingController titleController = TextEditingController();
-
-  bool uploading = false;
-  String uniqueIdName = DateTime.now().millisecondsSinceEpoch.toString();
 
   // Default Screen
   defaultScreen(){

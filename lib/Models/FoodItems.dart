@@ -1,26 +1,40 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Fooditems {
-  String? name;
-  String? address;
-  String? cost;
+  String? menuID;
+  String? menuTitle;
+  String? menuInfo;
+  Timestamp? publishedDate;
+  String? thumbnailUrl;
+  String? status;
 
   Fooditems({
-    this.name,
-    this.address,
-    this.cost,
+    this.menuID,
+    this.menuTitle,
+    this.menuInfo,
+    this.publishedDate,
+    this.thumbnailUrl,
+    this.status,
   });
 
-  static Fooditems fromJSON(Map<String, dynamic> json) => Fooditems(
-        name: json["name"],
-        address: json["address"],
-        cost: json["project cost"],
-      );
+  Fooditems.fromJSON(Map<String, dynamic> json) {
+    menuID = json["menuID"];
+    menuTitle = json['menuTitle'];
+    menuInfo = json['menuInfo'];
+    publishedDate = json['publishedDate'];
+    thumbnailUrl = json['thumbnailUrl'];
+    status = json['status'];
+  }
 
   Map<String, dynamic> toJson() {
-    // ignore: prefer_collection_literals
     final Map<String, dynamic> data = Map<String, dynamic>();
-    data["name"] = name;
-    data["address"] = address;
-    data["cost"] = cost;
+    data["menuID"] = menuID;
+    data['menuTitle'] = menuTitle;
+    data['menuInfo'] = menuInfo;
+    data['publishedDate'] = publishedDate;
+    data['thumbnailUrl'] = thumbnailUrl;
+    data['status'] = status;
+
     return data;
   }
 }

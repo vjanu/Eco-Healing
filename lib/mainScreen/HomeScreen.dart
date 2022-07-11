@@ -172,19 +172,20 @@ class _HomeScreenState extends State<HomeScreen> {
               border: Border(bottom: BorderSide(color: Colors.black12))),
           child: ListTile(
             title: Text(
-              fooditems.name!,
+              fooditems.menuInfo!,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 25,
               ),
             ),
-            subtitle: Text(fooditems.address!),
+            // image: Image(fooditems.thumbnailUrl),
+            subtitle: Text(fooditems.menuTitle!),
             trailing: const Icon(Icons.keyboard_arrow_right),
             // onTap: () {
             //   Navigator.push(
             //      context,
             //       MaterialPageRoute(
-            //          builder: (context) => projectScreen(projects)));
+            //          builder: (context) => Fooditems(fooditems)));
             // },
           ),
         ),

@@ -11,6 +11,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as fStorage;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -167,9 +168,8 @@ class _SignupScreenState extends State<SignupScreen> {
       "userAvatarUrl": imageXFile,
       "status": "approved",
     });
-    //Future<SharedPreferences> sharedPreferences = SharedPreferences.getInstance();
-    //SharedPreferences? sharedPreferences;// = await SharedPreferences.getInstance();
-    //await sharedPreferences!.setString("uid", currentUser.uid);
+    // Future<SharedPreferences> sharedPreferences = SharedPreferences.getInstance();
+    // await sharedPreferences!.setString("uid", currentUser.uid);
     //await sharedPreferences!.setString("name", namecontroller.text.trim());
     //await sharedPreferences!.setString("ImageUrl", usersImageUrl);
   }
