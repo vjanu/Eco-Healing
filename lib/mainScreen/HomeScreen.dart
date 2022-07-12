@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
         length: 3,
         child: Scaffold(
           appBar: AppBar(
-            title: const Text("Welcome"),
+            title: const Text("Eco-healing"),
             backgroundColor: Colors.lightGreen,
             centerTitle: true,
             bottom: TabBar(
@@ -67,6 +67,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     return ListView(
                       children: fooditems!.map(buildfooditem).toList(),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
                     );
                   }
                   return const Center(child: CircularProgressIndicator());
@@ -77,9 +79,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     final clothitems = snapshot.data;
-
                     return ListView(
                       children: clothitems!.map(buildclothitem).toList(),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
                     );
                   }
 
@@ -95,6 +98,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     return ListView(
                       children:
                           electronicitems!.map(buildelectronicitem).toList(),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
                     );
                   }
 
