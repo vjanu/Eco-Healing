@@ -68,6 +68,35 @@ class itemScreen extends StatelessWidget {
               const SizedBox(
                 height: 10,
               ),
+
+              // ---------- Details ------------------
+              const Text(
+                "Item Details",
+                style: TextStyle(
+                  fontSize: 14,
+                ),
+              ),
+              Container(
+                  constraints: BoxConstraints(
+                    maxHeight: height / 10,
+                  ),
+                  decoration: const BoxDecoration(
+                      border:
+                          Border(bottom: BorderSide(color: Colors.black12))),
+                  width: width,
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Text(
+                    _clothitems.details!,
+                    softWrap: true,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  )),
+              const SizedBox(
+                height: 10,
+              ),
+              // ---------- Details ------------------
               // ---------- client Address --------------
               const Text(
                 "Address",

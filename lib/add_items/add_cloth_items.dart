@@ -23,6 +23,7 @@ class add_cloth extends StatefulWidget {
 
 class _add_clothState extends State<add_cloth> {
   final nameController = TextEditingController();
+  final detailController = TextEditingController();
   final addressController = TextEditingController();
   final costController = TextEditingController();
 
@@ -57,6 +58,7 @@ class _add_clothState extends State<add_cloth> {
     super.initState();
 
     nameController.addListener(() => setState(() {}));
+    detailController.addListener(() => setState(() {}));
     addressController.addListener(() => setState(() {}));
     costController.addListener(() => setState(() {}));
   }
@@ -65,6 +67,7 @@ class _add_clothState extends State<add_cloth> {
   Future saveDataToFirebase() async {
     Map<String, dynamic> data = {
       "name": nameController.text.trim(),
+      "details": detailController.text.trim(),
       "address": addressController.text.trim(),
       "cost": costController.text,
     };
@@ -84,12 +87,12 @@ class _add_clothState extends State<add_cloth> {
                 title: const Text('Do you want to Cancel?'),
                 actions: [
                   ElevatedButton(
-                    onPressed: () => Navigator.of(context).pop(false),
-                    child: const Text('No'),
+                    onPressed: () => Navigator.of(context).pop(true),
+                    child: const Text('Yes'),
                   ),
                   ElevatedButton(
-                    onPressed: () => Navigator.of(context).pop(true),
-                    child: const Text('Cancel'),
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: const Text('No'),
                   ),
                 ],
               );
@@ -104,16 +107,16 @@ class _add_clothState extends State<add_cloth> {
         appBar: AppBar(
           flexibleSpace: Container(
               decoration: const BoxDecoration(
-            color: Colors.black,
+            color: Colors.lightGreen,
           )),
           title: const Text("Add Cloting Items"),
           centerTitle: true,
           automaticallyImplyLeading: true,
           titleTextStyle: const TextStyle(
-            color: Colors.white,
-            fontSize: 25,
+            color: Colors.white60,
+            fontSize: 21,
             fontFamily: "Signatra",
-            letterSpacing: 3,
+            letterSpacing: 2,
           ),
         ),
         body: Form(
@@ -124,6 +127,10 @@ class _add_clothState extends State<add_cloth> {
               child: Column(
                 children: [
                   buildName(),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  buildDetails(),
                   const SizedBox(
                     height: 20,
                   ),
@@ -216,6 +223,30 @@ class _add_clothState extends State<add_cloth> {
         textInputAction: TextInputAction.done,
       );
 
+  Widget buildDetails() => TextFormField(
+        controller: detailController,
+        validator: (detailController) {
+          if (detailController!.isEmpty) {
+            return 'Enter item details';
+          } else {
+            return null;
+          }
+        },
+        decoration: InputDecoration(
+            hintText: 'Details',
+            labelText: 'Item Details',
+            border: const OutlineInputBorder(),
+            suffixIcon: detailController.text.isEmpty
+                ? Container(
+                    width: 0,
+                  )
+                : IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => detailController.clear(),
+                  )),
+        textInputAction: TextInputAction.done,
+      );
+
   Widget buildAddress() => TextFormField(
         controller: addressController,
         validator: (addresscontroller) {
@@ -242,13 +273,13 @@ class _add_clothState extends State<add_cloth> {
         controller: costController,
         validator: (costController) {
           if (costController!.isEmpty) {
-            return 'Enter the Project Cost';
+            return 'Enter the Cost';
           } else {
             return null;
           }
         },
         decoration: InputDecoration(
-            hintText: 'Project Cost',
+            hintText: 'Cost',
             labelText: 'Cost',
             prefixIcon: const Icon(
               Icons.attach_money,
