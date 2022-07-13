@@ -1,3 +1,5 @@
+import 'package:eco_healing/Models/user_model.dart';
+import 'package:eco_healing/Screens/Chat_screen.dart';
 import 'package:eco_healing/Widget/ChatScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:eco_healing/global/global.dart';
@@ -68,7 +70,7 @@ class MyDrawer extends StatelessWidget {
                 //       Navigator.push(
                 //           context,
                 //           MaterialPageRoute(
-                //               builder: (c) => const ChatScreen()));
+                //               builder: (c) => const Chatscreen1(user)));
                 //     });
                 //   },
                 // ),

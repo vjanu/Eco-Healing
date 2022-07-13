@@ -2,16 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eco_healing/Models/user_model.dart';
 import 'package:flutter/material.dart';
 
-class Chatscreen extends StatefulWidget {
+class Chatscreen1 extends StatefulWidget {
   UserModel user;
 
-  Chatscreen(this.user);
+  Chatscreen1(this.user);
 
   @override
-  State<Chatscreen> createState() => _ChatscreenState();
+  State<Chatscreen1> createState() => _Chatscreen1State();
 }
 
-class _ChatscreenState extends State<Chatscreen> {
+class _Chatscreen1State extends State<Chatscreen1> {
   TextEditingController searchController = TextEditingController();
   List<Map> searchResult = [];
   bool isLoading = false;

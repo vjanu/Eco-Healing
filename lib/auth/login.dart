@@ -6,6 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:eco_healing/Widget/custom_field.dart';
 import 'package:eco_healing/global/global.dart';
+
+import '../Screens/forgot_password_page.dart';
 // import 'package:flutter/services.dart';
 
 class login_page extends StatefulWidget {
@@ -22,7 +24,6 @@ class _login_pageState extends State<login_page> {
 
   formValidation() {
     if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
-      //login
       loginNow();
     } else {
       showDialog(
@@ -142,6 +143,23 @@ class _login_pageState extends State<login_page> {
           const SizedBox(
             height: 30,
           ),
+          GestureDetector(
+            child: const Text(
+              'Forgot Password ?',
+              style: TextStyle(
+                decoration: TextDecoration.underline,
+                color: Colors.lightBlueAccent,
+                fontSize: 20,
+              ),
+            ),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ForgotPasswordPage(),
+                  ));
+            },
+          )
         ],
       ),
     );
