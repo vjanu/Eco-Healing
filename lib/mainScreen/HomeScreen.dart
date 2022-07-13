@@ -20,6 +20,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   ValueNotifier<bool> isDialOpen = ValueNotifier(false);
+  Future<bool> _onWillPop() async {
+    return false; //<-- SEE HERE
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,136 +37,137 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       child: DefaultTabController(
         length: 3,
-        child: Scaffold(
-          appBar: AppBar(
-            title: const Text("Eco-healing"),
-            backgroundColor: Colors.lightGreen,
-            centerTitle: true,
-            bottom: TabBar(
-              tabs: [
-                Tab(
-                  text: 'Food',
-                  icon: Icon(Icons.fastfood_rounded),
+        child: WillPopScope(
+          onWillPop: _onWillPop,
+          child: Scaffold(
+            appBar: AppBar(
+              title: const Text("Eco-healing"),
+              backgroundColor: Colors.lightGreen,
+              centerTitle: true,
+              bottom: const TabBar(
+                tabs: [
+                  Tab(
+                    text: 'Food',
+                    icon: Icon(Icons.fastfood_rounded),
+                  ),
+                  Tab(
+                    text: 'Clothing',
+                    icon: Icon(Icons.local_shipping_rounded),
+                  ),
+                  Tab(
+                    text: 'Electronics',
+                    icon: Icon(Icons.electrical_services_rounded),
+                  ),
+                ],
+              ),
+            ),
+            drawer: const MyDrawer(),
+            body: TabBarView(
+              children: [
+                StreamBuilder<List<Fooditems>>(
+                  stream: readFooditems(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      final fooditems = snapshot.data;
+
+                      return ListView(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 5.0, vertical: 10.0),
+                        children: fooditems!.map(buildfooditem).toList(),
+                      );
+                    }
+                    return const Center(child: CircularProgressIndicator());
+                  },
                 ),
-                Tab(
-                  text: 'Clothing',
-                  icon: Icon(Icons.local_shipping_rounded),
+                StreamBuilder<List<Clothitems>>(
+                  stream: readClothitems(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      final clothitems = snapshot.data;
+                      return ListView(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 5.0, vertical: 10.0),
+                        children: clothitems!.map(buildclothitem).toList(),
+                      );
+                    }
+
+                    return const Center(child: CircularProgressIndicator());
+                  },
                 ),
-                Tab(
-                  text: 'Electronics',
-                  icon: Icon(Icons.electrical_services_rounded),
+                StreamBuilder<List<Electronicitems>>(
+                  stream: readElectronicitems(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      final electronicitems = snapshot.data;
+
+                      return ListView(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 5.0, vertical: 10.0),
+                        children:
+                            electronicitems!.map(buildelectronicitem).toList(),
+                      );
+                    }
+
+                    return const Center(child: CircularProgressIndicator());
+                  },
                 ),
               ],
             ),
-          ),
-          drawer: MyDrawer(),
-          body: TabBarView(
-            children: [
-              StreamBuilder<List<Fooditems>>(
-                stream: readFooditems(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    final fooditems = snapshot.data;
+            //use incae tabbar fails
+            // StreamBuilder<List<Fooditems>>(
+            //   stream: readFooditems(),
+            //   builder: (context, snapshot) {
+            //     if (snapshot.hasData) {
+            //       final fooditems = snapshot.data;
+            //
+            //       return ListView(
+            //         children: fooditems!.map(buildfooditem).toList(),
+            //       );
+            //     }
+            //
+            //     return const Center(child: CircularProgressIndicator());
+            //   },
+            // ),
 
-                    return ListView(
-                      children: fooditems!.map(buildfooditem).toList(),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
-                    );
-                  }
-                  return const Center(child: CircularProgressIndicator());
-                },
-              ),
-              StreamBuilder<List<Clothitems>>(
-                stream: readClothitems(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    final clothitems = snapshot.data;
-                    return ListView(
-                      children: clothitems!.map(buildclothitem).toList(),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
-                    );
-                  }
-
-                  return const Center(child: CircularProgressIndicator());
-                },
-              ),
-              StreamBuilder<List<Electronicitems>>(
-                stream: readElectronicitems(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    final electronicitems = snapshot.data;
-
-                    return ListView(
-                      children:
-                          electronicitems!.map(buildelectronicitem).toList(),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
-                    );
-                  }
-
-                  return const Center(child: CircularProgressIndicator());
-                },
-              ),
-            ],
-          ),
-          //use incae tabbar fails
-          // StreamBuilder<List<Fooditems>>(
-          //   stream: readFooditems(),
-          //   builder: (context, snapshot) {
-          //     if (snapshot.hasData) {
-          //       final fooditems = snapshot.data;
-          //
-          //       return ListView(
-          //         children: fooditems!.map(buildfooditem).toList(),
-          //       );
-          //     }
-          //
-          //     return const Center(child: CircularProgressIndicator());
-          //   },
-          // ),
-
-          floatingActionButton: SpeedDial(
-            animatedIcon: AnimatedIcons.add_event,
-            backgroundColor: Colors.deepOrangeAccent,
-            overlayColor: Colors.lightGreen,
-            openCloseDial: isDialOpen,
-            overlayOpacity: 0,
-            spacing: 10,
-            spaceBetweenChildren: 10,
-            children: [
-              SpeedDialChild(
-                  child: Icon(Icons.fastfood_rounded),
-                  label: 'Upload Food Items',
-                  backgroundColor: Colors.lightGreen,
-                  onTap: () {
-                    print('Food Button Selected');
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (c) => const AddFood_itmes()));
-                  }),
-              SpeedDialChild(
-                  child: Icon(Icons.local_shipping_rounded),
-                  label: 'Upload Cloth Items',
-                  backgroundColor: Colors.lightGreen,
-                  onTap: () {
-                    print('Cloth Button Selected');
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (c) => const add_cloth()));
-                  }),
-              SpeedDialChild(
-                  child: Icon(Icons.electrical_services_rounded),
-                  label: 'Upload Eletronic Items',
-                  backgroundColor: Colors.lightGreen,
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (c) => const add_electronic()));
-                  })
-            ],
+            floatingActionButton: SpeedDial(
+              animatedIcon: AnimatedIcons.add_event,
+              backgroundColor: Colors.deepOrangeAccent,
+              overlayColor: Colors.lightGreen,
+              openCloseDial: isDialOpen,
+              overlayOpacity: 0,
+              spacing: 10,
+              spaceBetweenChildren: 10,
+              children: [
+                SpeedDialChild(
+                    child: const Icon(Icons.fastfood_rounded),
+                    label: 'Upload Food Items',
+                    backgroundColor: Colors.lightGreen,
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (c) => const AddFood_itmes()));
+                    }),
+                SpeedDialChild(
+                    child: const Icon(Icons.local_shipping_rounded),
+                    label: 'Upload Cloth Items',
+                    backgroundColor: Colors.lightGreen,
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (c) => const add_cloth()));
+                    }),
+                SpeedDialChild(
+                    child: const Icon(Icons.electrical_services_rounded),
+                    label: 'Upload Eletronic Items',
+                    backgroundColor: Colors.lightGreen,
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (c) => const add_electronic()));
+                    })
+              ],
+            ),
           ),
         ),
       ),

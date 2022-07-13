@@ -7,7 +7,7 @@ class Customfield extends StatelessWidget {
   final IconData? data;
   final String? hintText;
   bool? isObsecure = true;
-  bool? enabled  = true;
+  bool? enabled = true;
 
   Customfield({
     this.controller,
@@ -15,34 +15,32 @@ class Customfield extends StatelessWidget {
     this.hintText,
     this.isObsecure,
     this.enabled,
-});
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration:const BoxDecoration(
-        color:Colors.white,
+      decoration: const BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(10)),
       ),
-      padding:const EdgeInsets.all(8.0),
-      margin:const EdgeInsets.all(10),
-      child:TextFormField(
-        enabled:enabled,
+      padding: const EdgeInsets.all(8.0),
+      margin: const EdgeInsets.all(10),
+      child: TextFormField(
+        enabled: enabled,
         controller: controller,
-        obscureText:isObsecure!,
-        cursorColor:Theme.of(context).primaryColor,
-        decoration:InputDecoration(
-          border:InputBorder.none,
+        obscureText: isObsecure!,
+        cursorColor: Theme.of(context).primaryColor,
+        decoration: InputDecoration(
+          border: InputBorder.none,
           prefixIcon: Icon(
             data,
-            color:Colors.cyan,
+            color: Colors.cyan,
           ),
-          focusColor:Theme.of(context).primaryColor,
+          focusColor: Theme.of(context).primaryColor,
           hintText: hintText,
-
         ),
       ),
-
     );
   }
 }
