@@ -65,18 +65,17 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.deepPurpleAccent[200],
+        backgroundColor: Colors.green,
         elevation: 0,
         title: Text('Reset Password'),
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 25.0),
+            padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 22.0),
             child: Text(
               "Enter your email and we will end you a password reset link",
-              textAlign: TextAlign.center,
+              textAlign: TextAlign.justify,
               style: TextStyle(fontSize: 20),
             ),
           ),
@@ -88,13 +87,14 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             child: TextField(
               controller: emailController,
               decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.email),
                   enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
                       borderRadius: BorderRadius.circular(12)),
                   focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.purpleAccent),
                       borderRadius: BorderRadius.circular(12)),
-                  hintText: 'email',
+                  hintText: 'E-mail',
                   fillColor: Colors.grey[200],
                   filled: true),
             ),
@@ -102,8 +102,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           SizedBox(height: 10),
           MaterialButton(
             onPressed: () => passwordreset(),
-            child: Text('Reset Password'),
-            color: Colors.deepPurpleAccent[200],
+            child: const Text('Reset Password'),
+            color: Colors.green,
           ),
         ],
       ),
