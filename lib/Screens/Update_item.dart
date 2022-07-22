@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_typing_uninitialized_variables, unnecessary_brace_in_string_interps, use_build_context_synchronously
-
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,20 +11,24 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
+import '../Models/ElectronicItems.dart';
 import '../storage_service.dart';
 
-class add_food extends StatefulWidget {
-  const add_food({Key? key}) : super(key: key);
+class updateItem extends StatefulWidget {
+  // const updateItem({Key? key}) : super(key: key);
+  Electronicitems electronicitems;
+  updateItem(this.electronicitems);
 
   @override
-  State<add_food> createState() => _add_foodState();
+  State<updateItem> createState() => _updateItemState();
 }
 
-class _add_foodState extends State<add_food> {
+class _updateItemState extends State<updateItem> {
   final nameController = TextEditingController();
   final detailController = TextEditingController();
   final addressController = TextEditingController();
   final costController = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -103,12 +105,13 @@ class _add_foodState extends State<add_food> {
       "email": uemail,
       "filepath": path,
       "filename": filename,
-      "item_id": time,
     };
-
-    FirebaseFirestore.instance.collection("food").doc(time).set(data);
+    FirebaseFirestore.instance
+        .collection("electronic")
+        .doc(widget.electronicitems.id)
+        .set(data);
     firebase_storage.FirebaseStorage.instance
-        .ref('projects/food/$filename')
+        .ref('projects/electronics/$filename')
         .putFile(file!);
   }
 
@@ -147,7 +150,7 @@ class _add_foodState extends State<add_food> {
               decoration: const BoxDecoration(
             color: Colors.lightGreen,
           )),
-          title: const Text("Add Food Items"),
+          title: const Text("Update Electronic Item"),
           centerTitle: true,
           automaticallyImplyLeading: true,
           titleTextStyle: const TextStyle(
@@ -176,7 +179,6 @@ class _add_foodState extends State<add_food> {
                   const SizedBox(
                     height: 20,
                   ),
-
                   Container(
                     width: 400,
                     height: 40,
@@ -212,6 +214,7 @@ class _add_foodState extends State<add_food> {
                   const SizedBox(
                     height: 20,
                   ),
+
                   // ----------- submit button ------------
                   Center(
                     child: ElevatedButton(
@@ -226,7 +229,6 @@ class _add_foodState extends State<add_food> {
                         final isValid = _formKey.currentState!.validate();
                         if (isValid == true) {
                           saveDataToFirebase();
-
                           Navigator.pop(context);
                         }
                       },
@@ -265,7 +267,6 @@ class _add_foodState extends State<add_food> {
                   )),
         textInputAction: TextInputAction.done,
       );
-
   Widget buildDetails() => TextFormField(
         controller: detailController,
         validator: (detailController) {
@@ -316,13 +317,13 @@ class _add_foodState extends State<add_food> {
         controller: costController,
         validator: (costController) {
           if (costController!.isEmpty) {
-            return 'Enter the Cost';
+            return 'Enter the Project Cost';
           } else {
             return null;
           }
         },
         decoration: InputDecoration(
-            hintText: 'Cost',
+            hintText: 'Project Cost',
             labelText: 'Cost',
             prefixIcon: const Icon(
               Icons.attach_money,

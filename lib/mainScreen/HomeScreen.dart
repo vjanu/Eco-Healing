@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eco_healing/Models/ElectronicItems.dart';
 import 'package:eco_healing/Widget/electronic_item_screen.dart';
@@ -8,6 +10,7 @@ import 'package:eco_healing/add_items/add_electronic_items.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:eco_healing/add_items/add_food_items.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import '../Models/FoodItems.dart';
 import '../Models/ClothItems.dart';
@@ -25,7 +28,34 @@ final FirebaseAuth auth = FirebaseAuth.instance;
 class _HomeScreenState extends State<HomeScreen> {
   ValueNotifier<bool> isDialOpen = ValueNotifier(false);
   Future<bool> _onWillPop() async {
-    return false; //<-- SEE HERE
+    final value = await showDialog<bool>(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Do you want to Quit?'),
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  if (Platform.isAndroid) {
+                    SystemNavigator.pop();
+                  } else {
+                    exit(0);
+                  }
+                },
+                child: const Text('Yes'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('No'),
+              ),
+            ],
+          );
+        });
+    if (value != null) {
+      return Future.value(value);
+    } else {
+      return Future.value(false);
+    }
   }
 
   // final CollectionReference noticeCollection =
@@ -53,7 +83,15 @@ class _HomeScreenState extends State<HomeScreen> {
               title: const Text("Eco-healing"),
               backgroundColor: Colors.lightGreen,
               centerTitle: true,
-              bottom: const TabBar(
+              bottom: TabBar(
+                padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                unselectedLabelColor: Colors.white60,
+                indicatorSize: TabBarIndicatorSize.tab,
+                indicator: BoxDecoration(
+                    gradient: LinearGradient(
+                        colors: [Colors.blueAccent, Colors.deepPurple]),
+                    borderRadius: BorderRadius.circular(50),
+                    color: Colors.redAccent),
                 tabs: [
                   Tab(
                     text: 'Food',
@@ -78,20 +116,22 @@ class _HomeScreenState extends State<HomeScreen> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       final fooditems = snapshot.data;
-
-                      return ListView(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 5.0, vertical: 10.0),
-                        children: fooditems!.map(buildfooditem).toList(),
-                      );
-                    } else {
-                      return Center(
-                        child: Text("No listings found :(",
-                            textAlign: TextAlign.center,
-                            style: new TextStyle(
-                              fontSize: 20,
-                            )),
-                      );
+                      final size = snapshot.data?.length;
+                      if (size == 0) {
+                        return const Center(
+                          child: Text("No listings found :(",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 20,
+                              )),
+                        );
+                      } else {
+                        return ListView(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 5.0, vertical: 10.0),
+                          children: fooditems!.map(buildfooditem).toList()!,
+                        );
+                      }
                     }
                     return const Center(child: CircularProgressIndicator());
                   },
@@ -101,21 +141,23 @@ class _HomeScreenState extends State<HomeScreen> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       final clothitems = snapshot.data;
-                      return ListView(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 5.0, vertical: 10.0),
-                        children: clothitems!.map(buildclothitem).toList(),
-                      );
-                    } else {
-                      return Center(
-                        child: Text("No listings found :(",
-                            textAlign: TextAlign.center,
-                            style: new TextStyle(
-                              fontSize: 20,
-                            )),
-                      );
+                      final size = snapshot.data?.length;
+                      if (size == 0) {
+                        return const Center(
+                          child: Text("No listings found :(",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 20,
+                              )),
+                        );
+                      } else {
+                        return ListView(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 5.0, vertical: 10.0),
+                          children: clothitems!.map(buildclothitem).toList(),
+                        );
+                      }
                     }
-
                     return const Center(child: CircularProgressIndicator());
                   },
                 ),
@@ -124,22 +166,25 @@ class _HomeScreenState extends State<HomeScreen> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       final electronicitems = snapshot.data;
-                      return ListView(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 5.0, vertical: 10.0),
-                        children:
-                            electronicitems!.map(buildelectronicitem).toList(),
-                      );
-                    } else {
-                      return Center(
-                        child: Text("No listings found :(",
-                            textAlign: TextAlign.center,
-                            style: new TextStyle(
-                              fontSize: 20,
-                            )),
-                      );
+                      final size = snapshot.data?.length;
+                      if (size == 0) {
+                        return const Center(
+                          child: Text("No listings found :(",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 20,
+                              )),
+                        );
+                      } else {
+                        return ListView(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 5.0, vertical: 10.0),
+                          children: electronicitems!
+                              .map(buildelectronicitem)
+                              .toList(),
+                        );
+                      }
                     }
-
                     return const Center(child: CircularProgressIndicator());
                   },
                 ),
