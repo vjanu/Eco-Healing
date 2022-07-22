@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-
+import '../Models/ClothItems.dart';
 import '../Models/ElectronicItems.dart';
 import '../storage_service.dart';
 
@@ -92,6 +92,12 @@ class _updateItemState extends State<updateItem> {
     detailController.addListener(() => setState(() {}));
     addressController.addListener(() => setState(() {}));
     costController.addListener(() => setState(() {}));
+
+    nameController.text = widget.electronicitems.name!;
+    detailController.text = widget.electronicitems.details!;
+    addressController.text = widget.electronicitems.address!;
+    costController.text = widget.electronicitems.cost!;
+    filename = widget.electronicitems.filename!;
   }
 
 // save data to firebase
@@ -101,7 +107,7 @@ class _updateItemState extends State<updateItem> {
       "details": detailController.text.trim(),
       "address": addressController.text.trim(),
       "cost": costController.text,
-      "id": time,
+      "id": widget.electronicitems.id,
       "email": uemail,
       "filepath": path,
       "filename": filename,

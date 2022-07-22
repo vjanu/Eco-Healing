@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eco_healing/Models/ElectronicItems.dart';
-import 'package:eco_healing/Screens/Update_item.dart';
+import 'package:eco_healing/Screens/update_electronic.dart';
 import 'package:eco_healing/Widget/electronic_item_screen.dart';
 import 'package:eco_healing/Widget/food_item_screen.dart';
 import 'package:eco_healing/Widget/cloth_item_screen.dart';
