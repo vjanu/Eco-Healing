@@ -123,12 +123,12 @@ class _add_electronicState extends State<add_electronic> {
                 title: const Text('Do you want to Cancel?'),
                 actions: [
                   ElevatedButton(
-                    onPressed: () => Navigator.of(context).pop(false),
-                    child: const Text('No'),
+                    onPressed: () => Navigator.of(context).pop(true),
+                    child: const Text('Yes'),
                   ),
                   ElevatedButton(
-                    onPressed: () => Navigator.of(context).pop(true),
-                    child: const Text('Cancel'),
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: const Text('No'),
                   ),
                 ],
               );
@@ -143,16 +143,16 @@ class _add_electronicState extends State<add_electronic> {
         appBar: AppBar(
           flexibleSpace: Container(
               decoration: const BoxDecoration(
-            color: Colors.black,
+            color: Colors.lightGreen,
           )),
           title: const Text("Add Electronic Items"),
           centerTitle: true,
           automaticallyImplyLeading: true,
           titleTextStyle: const TextStyle(
-            color: Colors.white,
-            fontSize: 25,
+            color: Colors.white60,
+            fontSize: 21,
             fontFamily: "Signatra",
-            letterSpacing: 3,
+            letterSpacing: 2,
           ),
         ),
         body: Form(

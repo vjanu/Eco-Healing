@@ -144,7 +144,7 @@ class _add_foodState extends State<add_food> {
               decoration: const BoxDecoration(
             color: Colors.lightGreen,
           )),
-          title: const Text("Add Cloting Items"),
+          title: const Text("Add Food Items"),
           centerTitle: true,
           automaticallyImplyLeading: true,
           titleTextStyle: const TextStyle(

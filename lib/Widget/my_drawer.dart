@@ -23,22 +23,25 @@ class MyDrawer extends StatelessWidget {
               children: [
                 // use when implementing chat
 
-                // ListTile(
-                //   leading: const Icon(
-                //     Icons.search,
-                //     color: Colors.black,
-                //   ),
-                //   title: const Text(
-                //     "Search",
-                //     style: TextStyle(color: Colors.black),
-                //   ),
-                //   onTap: () {},
-                // ),
-                // const Divider(
-                //   height: 10,
-                //   color: Colors.grey,
-                //   thickness: 2,
-                // ),
+                ListTile(
+                  leading: const Icon(
+                    Icons.search,
+                    color: Colors.black,
+                  ),
+                  title: const Text(
+                    "My Listing",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (c) => const myListing()));
+                  },
+                ),
+                const Divider(
+                  height: 10,
+                  color: Colors.grey,
+                  thickness: 2,
+                ),
 
                 ListTile(
                   leading: const Icon(
@@ -59,22 +62,22 @@ class MyDrawer extends StatelessWidget {
                   },
                 ),
 
-                ListTile(
-                  leading: const Icon(
-                    Icons.message,
-                    color: Colors.black,
-                  ),
-                  title: const Text(
-                    "My Listings",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  onTap: () {
-                    firebaseAuth.signOut().then((value) {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (c) => const myListing()));
-                    });
-                  },
-                ),
+                // ListTile(
+                //   leading: const Icon(
+                //     Icons.message,
+                //     color: Colors.black,
+                //   ),
+                //   title: const Text(
+                //     "My Listings",
+                //     style: TextStyle(color: Colors.black),
+                //   ),
+                //   onTap: () {
+                //     firebaseAuth.signOut().then((value) {
+                //       Navigator.push(context,
+                //           MaterialPageRoute(builder: (c) => const myListing()));
+                //     });
+                //   },
+                // ),
                 const Divider(
                   height: 10,
                   color: Colors.grey,
