@@ -2,6 +2,7 @@
 
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
 // ignore: depend_on_referenced_packages
@@ -23,11 +24,22 @@ class add_electronic extends StatefulWidget {
 
 class _add_electronicState extends State<add_electronic> {
   final nameController = TextEditingController();
+  final detailController = TextEditingController();
   final addressController = TextEditingController();
   final costController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  late final User user = _auth.currentUser!;
+  late final uid = user.uid;
+  // Similarly we can get email as well
+  late final uemail = user.email;
+
+  String path = "";
+  String filename = "";
+  File? file;
   Position? position;
   List<Placemark>? placeMarks;
   String completeAddress = "";
@@ -52,11 +64,30 @@ class _add_electronicState extends State<add_electronic> {
     addressController.text = completeAddress;
   }
 
+  getImageData() async {
+    final results = await FilePicker.platform.pickFiles(
+        allowMultiple: false,
+        type: FileType.custom,
+        allowedExtensions: ['png', 'jgp', 'jpeg']);
+    if (results == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please Upload an image'),
+        ),
+      );
+      return null;
+    }
+    path = results.files.single.path!;
+    filename = results.files.single.name;
+    setState(() => file = File(path!));
+  }
+
   @override
   void initState() {
     super.initState();
 
     nameController.addListener(() => setState(() {}));
+    detailController.addListener(() => setState(() {}));
     addressController.addListener(() => setState(() {}));
     costController.addListener(() => setState(() {}));
   }
@@ -65,10 +96,18 @@ class _add_electronicState extends State<add_electronic> {
   Future saveDataToFirebase() async {
     Map<String, dynamic> data = {
       "name": nameController.text.trim(),
+      "details": detailController.text.trim(),
       "address": addressController.text.trim(),
       "cost": costController.text,
+      "id": uid,
+      "email": uemail,
+      "filepath": path,
+      "filename": filename,
     };
     FirebaseFirestore.instance.collection("electronic").doc().set(data);
+    firebase_storage.FirebaseStorage.instance
+        .ref('projects/electronics/$filename')
+        .putFile(file!);
   }
 
   @override
@@ -127,6 +166,10 @@ class _add_electronicState extends State<add_electronic> {
                   const SizedBox(
                     height: 20,
                   ),
+                  buildDetails(),
+                  const SizedBox(
+                    height: 20,
+                  ),
                   buildAddress(),
                   const SizedBox(
                     height: 20,
@@ -159,6 +202,10 @@ class _add_electronicState extends State<add_electronic> {
                     height: 20,
                   ),
                   buildCost(),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  UploadPicture(),
                   const SizedBox(
                     height: 20,
                   ),
@@ -215,6 +262,29 @@ class _add_electronicState extends State<add_electronic> {
                   )),
         textInputAction: TextInputAction.done,
       );
+  Widget buildDetails() => TextFormField(
+        controller: detailController,
+        validator: (detailController) {
+          if (detailController!.isEmpty) {
+            return 'Enter item details';
+          } else {
+            return null;
+          }
+        },
+        decoration: InputDecoration(
+            hintText: 'Details',
+            labelText: 'Item Details',
+            border: const OutlineInputBorder(),
+            suffixIcon: detailController.text.isEmpty
+                ? Container(
+                    width: 0,
+                  )
+                : IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => detailController.clear(),
+                  )),
+        textInputAction: TextInputAction.done,
+      );
 
   Widget buildAddress() => TextFormField(
         controller: addressController,
@@ -264,5 +334,11 @@ class _add_electronicState extends State<add_electronic> {
                   )),
         textInputAction: TextInputAction.done,
         keyboardType: TextInputType.number,
+      );
+  Widget UploadPicture() => ElevatedButton(
+        onPressed: () {
+          getImageData();
+        },
+        child: Text('Upload Image'),
       );
 }

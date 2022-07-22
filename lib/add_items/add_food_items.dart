@@ -1,395 +1,345 @@
+// ignore_for_file: prefer_typing_uninitialized_variables, unnecessary_brace_in_string_interps, use_build_context_synchronously
+
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+// ignore: depend_on_referenced_packages
+import 'package:path/path.dart' as path;
+// ignore: depend_on_referenced_packages
+import 'package:intl/intl.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:image_picker/image_picker.dart';
-import '../Widget/error_dialog.dart';
-import '../Widget/progress_bar.dart';
-import '../global/global.dart';
-import '../mainScreen/HomeScreen.dart';
-import 'package:firebase_storage/firebase_storage.dart' as storageRef;
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
+import '../storage_service.dart';
 
-class AddFood_itmes extends StatefulWidget {
-  const AddFood_itmes({Key? key}) : super(key: key);
+class add_food extends StatefulWidget {
+  const add_food({Key? key}) : super(key: key);
 
   @override
-  State<AddFood_itmes> createState() => _AddFood_itmesState();
+  State<add_food> createState() => _add_foodState();
 }
 
-class _AddFood_itmesState extends State<AddFood_itmes> {
+class _add_foodState extends State<add_food> {
+  final nameController = TextEditingController();
+  final detailController = TextEditingController();
+  final addressController = TextEditingController();
+  final costController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
-  // Image Picker Handler
-  XFile? imageXFile;
-  final ImagePicker _picker = ImagePicker();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  TextEditingController shortInfoController = TextEditingController();
-  TextEditingController titleController = TextEditingController();
+  late final User user = _auth.currentUser!;
+  late final uid = user.uid;
+  // Similarly we can get email as well
+  late final uemail = user.email;
 
-  bool uploading = false;
-  String uniqueIdName = DateTime.now().millisecondsSinceEpoch.toString();
+  String path = "";
+  String filename = "";
+  File? file;
+  Position? position;
+  List<Placemark>? placeMarks;
+  String completeAddress = "";
 
-  // Image Uploading
-  uploadImage(nImageFile) async {
-    storageRef.Reference reference = storageRef.FirebaseStorage
-        .instance
-        .ref()
-        .child("foods");
-
-    storageRef.UploadTask uploadTask = reference.child(uniqueIdName + ".jpg").putFile(nImageFile);
-
-    storageRef.TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
-
-    String downloadURL = await taskSnapshot.ref.getDownloadURL();
-
-    return downloadURL;
-  }
-
-  saveInfo(String downloadUrl) {
-    final ref = FirebaseFirestore.instance.collection("food");
-
-    ref.doc(uniqueIdName).set({
-      "menuID": uniqueIdName,
-      // "sellerUID": sharedPreferences!.getString("uid"),
-      "menuInfo": shortInfoController.text.toString(),
-      "menuTitle": titleController.text.toString(),
-      "publishedDate": DateTime.now(),
-      "status": "available",
-      "thumbnailUrl": downloadUrl,
-    });
-
-    Clear_menu_upload_form();
-
-    setState(() {
-      uniqueIdName = DateTime.now().millisecondsSinceEpoch.toString();
-      uploading = false;
-    });
-  }
-
-  // Image Taker
-  takeImage(nContext){
-    return showDialog(
-      context: nContext,
-      builder: (context){
-        return SimpleDialog(
-          title: const Text(
-              'Select Image From',
-              style: TextStyle(
-                  color: Colors.blue,
-                  fontWeight:
-                  FontWeight.bold)),
-          children: [
-            SimpleDialogOption(
-              child: const Text(
-                "Go with Camera",
-                style: TextStyle(color: Colors.green),
-              ),
-              onPressed: captureImageWithCamera,
-            ),
-
-            SimpleDialogOption(
-              child: const Text(
-                "Go with Gallery",
-                style: TextStyle(color: Colors.green),
-              ),
-              onPressed: captureImageWithGallery,
-            ),
-
-            SimpleDialogOption(
-              child: const Text(
-                "Cancel",
-                style: TextStyle(color: Colors.red),
-              ),
-              onPressed: ()=> Navigator.pop(context),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  captureImageWithCamera() async{
-    Navigator.pop(context);
-
-    imageXFile = await _picker.pickImage(
-      source: ImageSource.camera,
-      maxHeight: 720 ,
-      maxWidth: 1280,
+  getCurrentLocation() async {
+    Position newPosition = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
     );
 
-    setState(() {
-      imageXFile;
-    });
-  }
-  captureImageWithGallery() async{
-    Navigator.pop(context);
+    position = newPosition;
 
-    imageXFile = await _picker.pickImage(
-      source: ImageSource.gallery,
-      maxHeight: 720 ,
-      maxWidth: 1280,
+    placeMarks = await placemarkFromCoordinates(
+      position!.latitude,
+      position!.longitude,
     );
 
-    setState(() {
-      imageXFile;
-    });
+    Placemark pMark = placeMarks![0];
+
+    completeAddress =
+        '${pMark.subThoroughfare} ${pMark.thoroughfare}, ${pMark.subLocality} ${pMark.locality}, ${pMark.subAdministrativeArea}, ${pMark.administrativeArea} ${pMark.postalCode}, ${pMark.country}';
+
+    addressController.text = completeAddress;
   }
-  // Add Items
-  menusUploadFormScreen(){
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Upload Food Item Menu"),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.green,
-                  Colors.greenAccent,
-                ],
-                begin: FractionalOffset(0.0,0.0),
-                end: FractionalOffset(1.0, 0.0),
-                stops: [0.0, 1.0],
-                tileMode: TileMode.clamp,
-              )
-          ),
+
+  getImageData() async {
+    final results = await FilePicker.platform.pickFiles(
+        allowMultiple: false,
+        type: FileType.custom,
+        allowedExtensions: ['png', 'jgp', 'jpeg']);
+    if (results == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please Upload an image'),
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white,),
-          onPressed: ()
-          {
-            Clear_menu_upload_form();
-          },
-        ),
-      ),
-      body: ListView(
-        children: [
-          uploading == true ? linearProgress() : const Text(""),
-          Container(
-            height: 230,
-            width: MediaQuery.of(context).size.width * 0.8,
-            child: Center(
-               child: AspectRatio(
-                 aspectRatio: 16/9,
-                 child: Container(
-                   decoration: BoxDecoration(
-                     image: DecorationImage(
-                       image: FileImage(
-                         File(imageXFile!.path)
-                       ),
-                       fit: BoxFit.cover,
-                     ),
-                   ),
-                 ),
-               ),
-            ),
-          ),
-          Divider(
-            color: Colors.green,
-            thickness: 2,
-          ),
-          ListTile(
-            leading: const Icon(
-              Icons.perm_device_information,
-              color: Colors.green,
-            ),
-            title: Container(
-              width: 250,
-              child: TextField(
-                style: const TextStyle(color: Colors.black54),
-                controller: shortInfoController,
-                decoration: const InputDecoration(
-                  hintText: "Menu Info",
-                  hintStyle: TextStyle(color: Colors.grey),
-                  border: InputBorder.none,
-                ),
-              ),
-
-            ),
-          ),
-          Divider(
-            color: Colors.green,
-            thickness: 2,
-          ),
-          ListTile(
-            leading: const Icon(
-              Icons.title,
-              color: Colors.green,
-            ),
-            title: Container(
-              width: 250,
-              child: TextField(
-                style: const TextStyle(color: Colors.black54),
-                controller: titleController,
-                decoration: const InputDecoration(
-                  hintText: "Menu Title",
-                  hintStyle: TextStyle(color: Colors.grey),
-                  border: InputBorder.none,
-                ),
-              ),
-
-            ),
-          ),
-          Divider(
-            color: Colors.green,
-            thickness: 2,
-          ),
-          ElevatedButton(
-            child: const Text(
-              "Add Item",
-              style: TextStyle(
-                color: Colors.black54,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                fontFamily: "Lobster",
-                letterSpacing: 3,
-              ),
-            ),
-            style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.green),
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    )
-                )
-            ),
-            onPressed: uploading ? null : ()=> validateUploadForm(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Clear_menu_upload_form(){
-    setState(() {
-      shortInfoController.clear();
-      titleController.clear();
-      imageXFile = null;
-    });
-  }
-
-  validateUploadForm() async {
-    setState(() {
-      uploading = true;
-    });
-
-    if(imageXFile != null)
-    {
-      if(shortInfoController.text.isNotEmpty && titleController.text.isNotEmpty)
-      {
-        setState(() {
-          uploading = true;
-        });
-
-        //upload image
-        String downloadUrl = await uploadImage(File(imageXFile!.path));
-
-        //save info to firestore
-        saveInfo(downloadUrl);
-      }
-      else
-      {
-        showDialog(
-            context: context,
-            builder: (c)
-            {
-              return ErrorDialog(
-                message: "Please write title and info for menu.",
-              );
-            }
-        );
-      }
-    }
-    else
-    {
-      showDialog(
-          context: context,
-          builder: (c)
-          {
-            return ErrorDialog(
-              message: "Please pick an image for menu.",
-            );
-          }
       );
+      return null;
     }
+    path = results.files.single.path!;
+    filename = results.files.single.name;
+    setState(() => file = File(path!));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    nameController.addListener(() => setState(() {}));
+    detailController.addListener(() => setState(() {}));
+    addressController.addListener(() => setState(() {}));
+    costController.addListener(() => setState(() {}));
+  }
+
+// save data to firebase
+  Future saveDataToFirebase() async {
+    Map<String, dynamic> data = {
+      "name": nameController.text.trim(),
+      "details": detailController.text.trim(),
+      "address": addressController.text.trim(),
+      "cost": costController.text,
+      "id": uid,
+      "email": uemail,
+      "filepath": path,
+      "filename": filename,
+    };
+    FirebaseFirestore.instance.collection("food").doc().set(data);
+    firebase_storage.FirebaseStorage.instance
+        .ref('projects/food/$filename')
+        .putFile(file!);
   }
 
   @override
   Widget build(BuildContext context) {
-    return imageXFile == null ? defaultScreen() : menusUploadFormScreen();
-  }
+    final Storage storage = Storage();
 
-  // Default Screen
-  defaultScreen(){
-    return Scaffold(
+    return WillPopScope(
+      onWillPop: () async {
+        final value = await showDialog<bool>(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text('Do you want to Cancel?'),
+                actions: [
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    child: const Text('Yes'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: const Text('No'),
+                  ),
+                ],
+              );
+            });
+        if (value != null) {
+          return Future.value(value);
+        } else {
+          return Future.value(false);
+        }
+      },
+      child: Scaffold(
         appBar: AppBar(
-          title: const Text("Add Food Items"),
           flexibleSpace: Container(
-            decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.green,
-                    Colors.greenAccent,
-                  ],
-                  begin: FractionalOffset(0.0,0.0),
-                  end: FractionalOffset(1.0, 0.0),
-                  stops: [0.0, 1.0],
-                  tileMode: TileMode.clamp,
-                )
-            ),
-          ),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black54,),
-            onPressed: ()
-            {
-              Navigator.push(context, MaterialPageRoute(builder: (c)=>const HomeScreen()));
-            },
+              decoration: const BoxDecoration(
+            color: Colors.lightGreen,
+          )),
+          title: const Text("Add Cloting Items"),
+          centerTitle: true,
+          automaticallyImplyLeading: true,
+          titleTextStyle: const TextStyle(
+            color: Colors.white60,
+            fontSize: 21,
+            fontFamily: "Signatra",
+            letterSpacing: 2,
           ),
         ),
-        body: Container(
-          decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.green,
-                  Colors.greenAccent,
-                  // Color(Colors.green.shade200),
-                ],
-                begin: FractionalOffset(0.0,0.0),
-                end: FractionalOffset(1.0, 0.0),
-                stops: [0.0, 1.0],
-                tileMode: TileMode.clamp,
-              )
-          ),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.add_shopping_cart, color: Colors.orange, size: 200,),
-                ElevatedButton(
-                  style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.orangeAccent),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          )
-                      )
+        body: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(32.0),
+              child: Column(
+                children: [
+                  buildName(),
+                  const SizedBox(
+                    height: 20,
                   ),
-                  onPressed: () {
-                    takeImage(context);
+                  buildDetails(),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  buildAddress(),
+                  const SizedBox(
+                    height: 20,
+                  ),
 
-                  },
-                  child: const Text(
-                    "Add Food Item Image",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
+                  Container(
+                    width: 400,
+                    height: 40,
+                    alignment: Alignment.center,
+                    child: ElevatedButton.icon(
+                      label: const Text(
+                        "Get my Current Location",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      icon: const Icon(
+                        Icons.location_on,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        getCurrentLocation();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.blueAccent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
                     ),
                   ),
-                )
-              ],
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  buildCost(),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  UploadPicture(),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  // ----------- submit button ------------
+                  Center(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          textStyle: const TextStyle(fontSize: 20),
+                          minimumSize: const Size(200, 50),
+                          primary: Colors.black,
+                          onPrimary: Colors.white,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15))),
+                      onPressed: () async {
+                        final isValid = _formKey.currentState!.validate();
+                        if (isValid == true) {
+                          saveDataToFirebase();
+
+                          Navigator.pop(context);
+                        }
+                      },
+                      child: const Text('Submit'),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        )
+        ),
+      ),
     );
   }
+
+  Widget buildName() => TextFormField(
+        controller: nameController,
+        validator: (nameController) {
+          if (nameController!.isEmpty) {
+            return 'Enter the Name';
+          } else {
+            return null;
+          }
+        },
+        decoration: InputDecoration(
+            hintText: 'Name',
+            labelText: 'Item Name',
+            border: const OutlineInputBorder(),
+            suffixIcon: nameController.text.isEmpty
+                ? Container(
+                    width: 0,
+                  )
+                : IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => nameController.clear(),
+                  )),
+        textInputAction: TextInputAction.done,
+      );
+
+  Widget buildDetails() => TextFormField(
+        controller: detailController,
+        validator: (detailController) {
+          if (detailController!.isEmpty) {
+            return 'Enter item details';
+          } else {
+            return null;
+          }
+        },
+        decoration: InputDecoration(
+            hintText: 'Details',
+            labelText: 'Item Details',
+            border: const OutlineInputBorder(),
+            suffixIcon: detailController.text.isEmpty
+                ? Container(
+                    width: 0,
+                  )
+                : IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => detailController.clear(),
+                  )),
+        textInputAction: TextInputAction.done,
+      );
+
+  Widget buildAddress() => TextFormField(
+        controller: addressController,
+        validator: (addresscontroller) {
+          if (addresscontroller!.isEmpty) {
+            return 'Enter the Address';
+          } else {
+            return null;
+          }
+        },
+        decoration: InputDecoration(
+            hintText: 'Address',
+            labelText: 'Address',
+            border: const OutlineInputBorder(),
+            suffixIcon: addressController.text.isEmpty
+                ? Container(width: 0)
+                : IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => addressController.clear(),
+                  )),
+        textInputAction: TextInputAction.done,
+      );
+
+  Widget buildCost() => TextFormField(
+        controller: costController,
+        validator: (costController) {
+          if (costController!.isEmpty) {
+            return 'Enter the Cost';
+          } else {
+            return null;
+          }
+        },
+        decoration: InputDecoration(
+            hintText: 'Cost',
+            labelText: 'Cost',
+            prefixIcon: const Icon(
+              Icons.attach_money,
+            ),
+            border: const OutlineInputBorder(),
+            suffixIcon: costController.text.isEmpty
+                ? Container(
+                    width: 0,
+                  )
+                : IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => costController.clear(),
+                  )),
+        textInputAction: TextInputAction.done,
+        keyboardType: TextInputType.number,
+      );
+  Widget UploadPicture() => ElevatedButton(
+        onPressed: () {
+          getImageData();
+        },
+        child: Text('Upload Image'),
+      );
 }

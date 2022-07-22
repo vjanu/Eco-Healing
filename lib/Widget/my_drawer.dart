@@ -6,6 +6,8 @@ import 'package:eco_healing/global/global.dart';
 import 'package:eco_healing/auth/auth_screen.dart';
 import 'package:eco_healing/Widget/ChatScreen.dart';
 
+import '../Screens/User_Listings.dart';
+
 class MyDrawer extends StatelessWidget {
   const MyDrawer({Key? key}) : super(key: key);
 
@@ -56,24 +58,23 @@ class MyDrawer extends StatelessWidget {
                     });
                   },
                 ),
-                // ListTile(
-                //   leading: const Icon(
-                //     Icons.message,
-                //     color: Colors.black,
-                //   ),
-                //   title: const Text(
-                //     "Chat",
-                //     style: TextStyle(color: Colors.black),
-                //   ),
-                //   onTap: () {
-                //     firebaseAuth.signOut().then((value) {
-                //       Navigator.push(
-                //           context,
-                //           MaterialPageRoute(
-                //               builder: (c) => const Chatscreen1(user)));
-                //     });
-                //   },
-                // ),
+
+                ListTile(
+                  leading: const Icon(
+                    Icons.message,
+                    color: Colors.black,
+                  ),
+                  title: const Text(
+                    "My Listings",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  onTap: () {
+                    firebaseAuth.signOut().then((value) {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (c) => const myListing()));
+                    });
+                  },
+                ),
                 const Divider(
                   height: 10,
                   color: Colors.grey,

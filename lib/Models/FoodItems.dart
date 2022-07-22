@@ -1,40 +1,59 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eco_healing/Widget/electronic_item_screen.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class Fooditems {
-  String? menuID;
-  String? menuTitle;
-  String? menuInfo;
-  Timestamp? publishedDate;
-  String? thumbnailUrl;
-  String? status;
+  String? name;
+  String? address;
+  String? cost;
+  String? details;
+  String? id;
+  String? email;
+  String? filename;
+  String? downloadUrl;
 
   Fooditems({
-    this.menuID,
-    this.menuTitle,
-    this.menuInfo,
-    this.publishedDate,
-    this.thumbnailUrl,
-    this.status,
+    this.name,
+    this.address,
+    this.cost,
+    this.details,
+    this.email,
+    this.id,
+    this.filename,
+    this.downloadUrl,
   });
 
-  Fooditems.fromJSON(Map<String, dynamic> json) {
-    menuID = json["menuID"];
-    menuTitle = json['menuTitle'];
-    menuInfo = json['menuInfo'];
-    publishedDate = json['publishedDate'];
-    thumbnailUrl = json['thumbnailUrl'];
-    status = json['status'];
+  static Fooditems fromJSON(Map<String, dynamic> json) => Fooditems(
+        name: json["name"],
+        address: json["address"],
+        cost: json["cost"],
+      );
+  Future<String> downloadUrl1(String imageName) async {
+    String downloadURL = await FirebaseStorage.instance
+        .ref('projects/food/$filename')
+        .getDownloadURL();
+    return downloadURL;
+  }
+
+  Fooditems.fromDocumentSnapshot(QueryDocumentSnapshot snapshot) {
+    //feild name should be exactly same as you given in friebase
+
+    name = snapshot.get('name');
+    address = snapshot.get('address');
+    cost = snapshot.get('cost');
+    details = snapshot.get('details');
+    id = snapshot.get('id');
+    email = snapshot.get('email');
+    filename = snapshot.get('filename');
+    // downloadUrl = snapshot.get('downloadUrl');
   }
 
   Map<String, dynamic> toJson() {
+    // ignore: prefer_collection_literals
     final Map<String, dynamic> data = Map<String, dynamic>();
-    data["menuID"] = menuID;
-    data['menuTitle'] = menuTitle;
-    data['menuInfo'] = menuInfo;
-    data['publishedDate'] = publishedDate;
-    data['thumbnailUrl'] = thumbnailUrl;
-    data['status'] = status;
-
+    data["name"] = name;
+    data["address"] = address;
+    data["cost"] = cost;
     return data;
   }
 }

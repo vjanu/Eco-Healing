@@ -1,9 +1,12 @@
 // ignore_for_file: use_key_in_widget_constructors
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:eco_healing/Models/ElectronicItems.dart';
 import 'package:eco_healing/Models/FoodItems.dart';
 import 'package:eco_healing/Models/ClothItems.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 // ignore: camel_case_types
 class itemScreen extends StatelessWidget {
@@ -36,11 +39,36 @@ class itemScreen extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.fromLTRB(10.0, 5, 10.0, 0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
+              FutureBuilder(
+                  future: _clothitems.downloadUrl1(_clothitems.filename!),
+                  builder:
+                      (BuildContext context, AsyncSnapshot<String> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done &&
+                        snapshot.hasData) {
+                      return Center(
+                        child: Container(
+                            width: 300,
+                            height: 250,
+                            child: Image.network(
+                              snapshot.data!,
+                              fit: BoxFit.cover,
+                            )),
+                      );
+                    }
+                    if (snapshot.connectionState == ConnectionState.waiting ||
+                        !snapshot.hasData) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    return Container();
+                  }),
+              const SizedBox(
+                height: 20,
+              ),
               // ---------- client Name --------------
               const Text(
                 "Item Name",
@@ -97,6 +125,36 @@ class itemScreen extends StatelessWidget {
                 height: 10,
               ),
               // ---------- Details ------------------
+
+              //Email
+              const Text(
+                "Uploader email",
+                style: TextStyle(
+                  fontSize: 14,
+                ),
+              ),
+              Container(
+                  constraints: BoxConstraints(
+                    maxHeight: height / 10,
+                  ),
+                  decoration: const BoxDecoration(
+                      border:
+                          Border(bottom: BorderSide(color: Colors.black12))),
+                  width: width,
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Text(
+                    _clothitems.email!,
+                    softWrap: true,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  )),
+              const SizedBox(
+                height: 10,
+              ),
+              //Email
+
               // ---------- client Address --------------
               const Text(
                 "Address",
@@ -154,6 +212,17 @@ class itemScreen extends StatelessWidget {
               const SizedBox(
                 height: 10,
               ),
+
+              // Container(
+              //     width: 300,
+              //     height: 250,
+              //     child: Image.network(
+              //       firebase_storage
+              //           .FirebaseStorage.instance
+              //           .ref('projects/permit/$pdfDrawing2FileName')
+              //           .getDownloadURL();.data!,
+              //       fit: BoxFit.cover,
+              //     ));
             ],
           ),
         ),
