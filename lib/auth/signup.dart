@@ -12,6 +12,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as fStorage;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:eco_healing/auth/VerifyEmail.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -151,7 +152,7 @@ class _SignupScreenState extends State<SignupScreen> {
       saveDataToFirestore(currentUser!).then((value) {
         Navigator.pop(context);
 
-        Route newRoute = MaterialPageRoute(builder: (c) => HomeScreen());
+        Route newRoute = MaterialPageRoute(builder: (c) => VerifyEmail());
         Navigator.pushReplacement(context, newRoute);
       });
     }
