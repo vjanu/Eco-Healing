@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eco_healing/Models/ElectronicItems.dart';
 import 'package:eco_healing/Widget/electronic_item_screen.dart';
-import 'package:eco_healing/Widget/item_screen.dart';
+import 'package:eco_healing/Widget/food_item_screen.dart';
+import 'package:eco_healing/Widget/cloth_item_screen.dart';
 import 'package:eco_healing/add_items/add_cloth_items.dart';
 import 'package:eco_healing/add_items/add_electronic_items.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<bool> _onWillPop() async {
     return false; //<-- SEE HERE
   }
+
+  // final CollectionReference noticeCollection =
+  //     FirebaseFirestore.instance.collection('clothes');
+  // late final Query unapproved =
+  //     noticeCollection.where("email", isNotEqualTo: "test@google.com");
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +105,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       final electronicitems = snapshot.data;
-
                       return ListView(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 5.0, vertical: 10.0),
@@ -143,10 +148,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     label: 'Upload Food Items',
                     backgroundColor: Colors.lightGreen,
                     onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (c) => const AddFood_itmes()));
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (c) => const add_food()));
                     }),
                 SpeedDialChild(
                     child: const Icon(Icons.local_shipping_rounded),
@@ -181,21 +184,20 @@ class _HomeScreenState extends State<HomeScreen> {
               border: Border(bottom: BorderSide(color: Colors.black12))),
           child: ListTile(
             title: Text(
-              fooditems.menuInfo!,
+              fooditems.name!,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 25,
               ),
             ),
-            // image: Image(fooditems.thumbnailUrl),
-            subtitle: Text(fooditems.menuTitle!),
+            subtitle: Text(fooditems.address!),
             trailing: const Icon(Icons.keyboard_arrow_right),
-            // onTap: () {
-            //   Navigator.push(
-            //      context,
-            //       MaterialPageRoute(
-            //          builder: (context) => Fooditems(fooditems)));
-            // },
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => foodItemScreen(fooditems)));
+            },
           ),
         ),
       );
@@ -251,21 +253,57 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       );
 
-  Stream<List<Fooditems>> readFooditems() => FirebaseFirestore.instance
-      .collection('food')
-      .snapshots()
-      .map((snapshot) =>
-          snapshot.docs.map((doc) => Fooditems.fromJSON(doc.data())).toList());
+  // Stream<List<Fooditems>> readFooditems() => FirebaseFirestore.instance
+  //     .collection('food')
+  //     .snapshots()
+  //     .map((snapshot) =>
+  //         snapshot.docs.map((doc) => Fooditems.fromJSON(doc.data())).toList());
 
-  Stream<List<Clothitems>> readClothitems() => FirebaseFirestore.instance
-      .collection('cloth')
-      .snapshots()
-      .map((snapshot) =>
-          snapshot.docs.map((doc) => Clothitems.fromJSON(doc.data())).toList());
+  Stream<List<Fooditems>> readFooditems() {
+    final CollectionReference noticeCollection =
+        FirebaseFirestore.instance.collection('food');
 
-  Stream<List<Electronicitems>> readElectronicitems() =>
-      FirebaseFirestore.instance.collection('electronic').snapshots().map(
-          (snapshot) => snapshot.docs
-              .map((doc) => Electronicitems.fromJSON(doc.data()))
-              .toList());
+    Stream<QuerySnapshot> stream = noticeCollection
+        .where("email", isNotEqualTo: auth.currentUser!.email)
+        .snapshots();
+    return stream.map((snapshot) => snapshot.docs.map((snap) {
+          return Fooditems.fromDocumentSnapshot(snap);
+        }).toList());
+  }
+
+  // Stream<List<Clothitems>> readClothitems() => FirebaseFirestore.instance
+  //     .collection('cloth')
+  //     .snapshots()
+  //     .map((snapshot) =>
+  //         snapshot.docs.map((doc) => Clothitems.fromJSON(doc.data())).toList());
+
+  // Stream<List<Electronicitems>> readElectronicitems() =>
+  //     FirebaseFirestore.instance.collection('electronic').snapshots().map(
+  //         (snapshot) => snapshot.docs
+  //             .map((doc) => Electronicitems.fromJSON(doc.data()))
+  //             .toList());
+
+  Stream<List<Electronicitems>> readElectronicitems() {
+    final CollectionReference noticeCollection =
+        FirebaseFirestore.instance.collection('electronic');
+
+    Stream<QuerySnapshot> stream = noticeCollection
+        .where("email", isNotEqualTo: auth.currentUser!.email)
+        .snapshots();
+    return stream.map((snapshot) => snapshot.docs.map((snap) {
+          return Electronicitems.fromDocumentSnapshot(snap);
+        }).toList());
+  }
+
+  Stream<List<Clothitems>> readClothitems() {
+    final CollectionReference noticeCollection =
+        FirebaseFirestore.instance.collection('cloth');
+
+    Stream<QuerySnapshot> stream = noticeCollection
+        .where("email", isNotEqualTo: auth.currentUser!.email)
+        .snapshots();
+    return stream.map((snapshot) => snapshot.docs.map((snap) {
+          return Clothitems.fromDocumentSnapshot(snap);
+        }).toList());
+  }
 }

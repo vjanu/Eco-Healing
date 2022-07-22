@@ -41,6 +41,29 @@ class electronicItemScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
+              FutureBuilder(
+                  future:
+                      _electronicitems.downloadUrl1(_electronicitems.filename!),
+                  builder:
+                      (BuildContext context, AsyncSnapshot<String> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done &&
+                        snapshot.hasData) {
+                      return Center(
+                        child: Container(
+                            width: 300,
+                            height: 250,
+                            child: Image.network(
+                              snapshot.data!,
+                              fit: BoxFit.cover,
+                            )),
+                      );
+                    }
+                    if (snapshot.connectionState == ConnectionState.waiting ||
+                        !snapshot.hasData) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    return Container();
+                  }),
               // ---------- client Name --------------
               const Text(
                 "Item Name",
@@ -68,6 +91,61 @@ class electronicItemScreen extends StatelessWidget {
               const SizedBox(
                 height: 10,
               ),
+              const Text(
+                "Uploader email",
+                style: TextStyle(
+                  fontSize: 14,
+                ),
+              ),
+              // ---------- Details ------------------
+              const Text(
+                "Item Details",
+                style: TextStyle(
+                  fontSize: 14,
+                ),
+              ),
+              Container(
+                  constraints: BoxConstraints(
+                    maxHeight: height / 10,
+                  ),
+                  decoration: const BoxDecoration(
+                      border:
+                          Border(bottom: BorderSide(color: Colors.black12))),
+                  width: width,
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Text(
+                    _electronicitems.details!,
+                    softWrap: true,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  )),
+              const SizedBox(
+                height: 10,
+              ),
+              //email
+              Container(
+                  constraints: BoxConstraints(
+                    maxHeight: height / 10,
+                  ),
+                  decoration: const BoxDecoration(
+                      border:
+                          Border(bottom: BorderSide(color: Colors.black12))),
+                  width: width,
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Text(
+                    _electronicitems.email!,
+                    softWrap: true,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  )),
+              const SizedBox(
+                height: 10,
+              ),
+              //Email
               // ---------- client Address --------------
               const Text(
                 "Address",

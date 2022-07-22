@@ -22,8 +22,8 @@ class foodItemScreen extends StatelessWidget {
       appBar: AppBar(
         flexibleSpace: Container(
             decoration: const BoxDecoration(
-              color: Colors.black,
-            )),
+          color: Colors.black,
+        )),
         title: const Text("Item Details"),
         centerTitle: true,
         automaticallyImplyLeading: true,
@@ -41,6 +41,31 @@ class foodItemScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
+              FutureBuilder(
+                  future: _fooditems.downloadUrl1(_fooditems.filename!),
+                  builder:
+                      (BuildContext context, AsyncSnapshot<String> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done &&
+                        snapshot.hasData) {
+                      return Center(
+                        child: Container(
+                            width: 300,
+                            height: 250,
+                            child: Image.network(
+                              snapshot.data!,
+                              fit: BoxFit.cover,
+                            )),
+                      );
+                    }
+                    if (snapshot.connectionState == ConnectionState.waiting ||
+                        !snapshot.hasData) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    return Container();
+                  }),
+              const SizedBox(
+                height: 10,
+              ),
               // ---------- client Name --------------
               const Text(
                 "Item Name",
@@ -54,11 +79,11 @@ class foodItemScreen extends StatelessWidget {
                   ),
                   decoration: const BoxDecoration(
                       border:
-                      Border(bottom: BorderSide(color: Colors.black12))),
+                          Border(bottom: BorderSide(color: Colors.black12))),
                   width: width,
                   padding: const EdgeInsets.symmetric(vertical: 2),
                   child: Text(
-                    _fooditems.menuTitle!,
+                    _fooditems.name!,
                     softWrap: true,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
@@ -68,25 +93,81 @@ class foodItemScreen extends StatelessWidget {
               const SizedBox(
                 height: 10,
               ),
-              // ---------- client Address --------------
+
+              // ---------- Details ------------------
               const Text(
-                "Image",
+                "Item Details",
                 style: TextStyle(
                   fontSize: 14,
                 ),
               ),
               Container(
-                // ignore: prefer_const_constructors
+                  constraints: BoxConstraints(
+                    maxHeight: height / 10,
+                  ),
+                  decoration: const BoxDecoration(
+                      border:
+                          Border(bottom: BorderSide(color: Colors.black12))),
+                  width: width,
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Text(
+                    _fooditems.details!,
+                    softWrap: true,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  )),
+              const SizedBox(
+                height: 10,
+              ),
+              //email
+              const Text(
+                "Uploader email",
+                style: TextStyle(
+                  fontSize: 14,
+                ),
+              ),
+              Container(
+                  constraints: BoxConstraints(
+                    maxHeight: height / 10,
+                  ),
+                  decoration: const BoxDecoration(
+                      border:
+                          Border(bottom: BorderSide(color: Colors.black12))),
+                  width: width,
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Text(
+                    _fooditems.email!,
+                    softWrap: true,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  )),
+              const SizedBox(
+                height: 10,
+              ),
+              //Email
+              // ---------- client Address --------------
+              const Text(
+                "Address",
+                style: TextStyle(
+                  fontSize: 14,
+                ),
+              ),
+              Container(
+                  // ignore: prefer_const_constructors
                   constraints: BoxConstraints(
                     maxHeight: height / 10,
                   ),
                   width: width,
                   decoration: const BoxDecoration(
                       border:
-                      Border(bottom: BorderSide(color: Colors.black12))),
+                          Border(bottom: BorderSide(color: Colors.black12))),
                   padding: const EdgeInsets.symmetric(vertical: 2),
                   child: Text(
-                    _fooditems.thumbnailUrl!,
+                    _fooditems.address!,
                     softWrap: true,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
@@ -99,23 +180,23 @@ class foodItemScreen extends StatelessWidget {
 
               // ---------- Project stauts --------------
               const Text(
-                "Status",
+                "Item Cost",
                 style: TextStyle(
                   fontSize: 14,
                 ),
               ),
               Container(
-                // ignore: prefer_const_constructors
+                  // ignore: prefer_const_constructors
                   constraints: BoxConstraints(
                     maxHeight: height / 10,
                   ),
                   width: width,
                   decoration: const BoxDecoration(
                       border:
-                      Border(bottom: BorderSide(color: Colors.black12))),
+                          Border(bottom: BorderSide(color: Colors.black12))),
                   padding: const EdgeInsets.symmetric(vertical: 2),
                   child: Text(
-                    _fooditems.status!,
+                    _fooditems.cost!,
                     softWrap: true,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,

@@ -2,6 +2,7 @@
 
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
 // ignore: depend_on_referenced_packages
@@ -21,14 +22,25 @@ class add_cloth extends StatefulWidget {
   State<add_cloth> createState() => _add_clothState();
 }
 
+final FirebaseAuth auth = FirebaseAuth.instance;
+
 class _add_clothState extends State<add_cloth> {
   final nameController = TextEditingController();
   final detailController = TextEditingController();
   final addressController = TextEditingController();
   final costController = TextEditingController();
-
   final _formKey = GlobalKey<FormState>();
 
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  final User user = auth.currentUser!;
+  late final uid = user.uid;
+  // Similarly we can get email as well
+  late final uemail = user.email;
+
+  String path = "";
+  String filename = "";
+  File? file;
   Position? position;
   List<Placemark>? placeMarks;
   String completeAddress = "";
@@ -53,6 +65,24 @@ class _add_clothState extends State<add_cloth> {
     addressController.text = completeAddress;
   }
 
+  getImageData() async {
+    final results = await FilePicker.platform.pickFiles(
+        allowMultiple: false,
+        type: FileType.custom,
+        allowedExtensions: ['png', 'jgp', 'jpeg']);
+    if (results == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please Upload an image'),
+        ),
+      );
+      return null;
+    }
+    path = results.files.single.path!;
+    filename = results.files.single.name;
+    setState(() => file = File(path!));
+  }
+
   @override
   void initState() {
     super.initState();
@@ -70,8 +100,15 @@ class _add_clothState extends State<add_cloth> {
       "details": detailController.text.trim(),
       "address": addressController.text.trim(),
       "cost": costController.text,
+      "id": uid,
+      "email": uemail,
+      "filepath": path,
+      "filename": filename,
     };
     FirebaseFirestore.instance.collection("cloth").doc().set(data);
+    firebase_storage.FirebaseStorage.instance
+        .ref('projects/cloth/$filename')
+        .putFile(file!);
   }
 
   @override
@@ -138,6 +175,7 @@ class _add_clothState extends State<add_cloth> {
                   const SizedBox(
                     height: 20,
                   ),
+
                   Container(
                     width: 400,
                     height: 40,
@@ -169,7 +207,10 @@ class _add_clothState extends State<add_cloth> {
                   const SizedBox(
                     height: 20,
                   ),
-
+                  UploadPicture(),
+                  const SizedBox(
+                    height: 20,
+                  ),
                   // ----------- submit button ------------
                   Center(
                     child: ElevatedButton(
@@ -184,6 +225,7 @@ class _add_clothState extends State<add_cloth> {
                         final isValid = _formKey.currentState!.validate();
                         if (isValid == true) {
                           saveDataToFirebase();
+
                           Navigator.pop(context);
                         }
                       },
@@ -295,5 +337,11 @@ class _add_clothState extends State<add_cloth> {
                   )),
         textInputAction: TextInputAction.done,
         keyboardType: TextInputType.number,
+      );
+  Widget UploadPicture() => ElevatedButton(
+        onPressed: () {
+          getImageData();
+        },
+        child: Text('Upload Image'),
       );
 }
