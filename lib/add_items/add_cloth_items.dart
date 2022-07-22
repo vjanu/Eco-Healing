@@ -22,7 +22,7 @@ class add_cloth extends StatefulWidget {
   State<add_cloth> createState() => _add_clothState();
 }
 
-final FirebaseAuth auth = FirebaseAuth.instance;
+// final FirebaseAuth auth = FirebaseAuth.instance;
 
 class _add_clothState extends State<add_cloth> {
   final nameController = TextEditingController();
@@ -33,7 +33,7 @@ class _add_clothState extends State<add_cloth> {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  final User user = auth.currentUser!;
+  late final User user = _auth.currentUser!;
   late final uid = user.uid;
   // Similarly we can get email as well
   late final uemail = user.email;

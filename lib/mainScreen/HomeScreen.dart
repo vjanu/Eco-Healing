@@ -5,6 +5,7 @@ import 'package:eco_healing/Widget/food_item_screen.dart';
 import 'package:eco_healing/Widget/cloth_item_screen.dart';
 import 'package:eco_healing/add_items/add_cloth_items.dart';
 import 'package:eco_healing/add_items/add_electronic_items.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:eco_healing/add_items/add_food_items.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -18,6 +19,8 @@ class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
+
+final FirebaseAuth auth = FirebaseAuth.instance;
 
 class _HomeScreenState extends State<HomeScreen> {
   ValueNotifier<bool> isDialOpen = ValueNotifier(false);
@@ -81,6 +84,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             horizontal: 5.0, vertical: 10.0),
                         children: fooditems!.map(buildfooditem).toList(),
                       );
+                    } else {
+                      return Center(
+                        child: Text("No listings found :(",
+                            textAlign: TextAlign.center,
+                            style: new TextStyle(
+                              fontSize: 20,
+                            )),
+                      );
                     }
                     return const Center(child: CircularProgressIndicator());
                   },
@@ -94,6 +105,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 5.0, vertical: 10.0),
                         children: clothitems!.map(buildclothitem).toList(),
+                      );
+                    } else {
+                      return Center(
+                        child: Text("No listings found :(",
+                            textAlign: TextAlign.center,
+                            style: new TextStyle(
+                              fontSize: 20,
+                            )),
                       );
                     }
 
@@ -110,6 +129,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             horizontal: 5.0, vertical: 10.0),
                         children:
                             electronicitems!.map(buildelectronicitem).toList(),
+                      );
+                    } else {
+                      return Center(
+                        child: Text("No listings found :(",
+                            textAlign: TextAlign.center,
+                            style: new TextStyle(
+                              fontSize: 20,
+                            )),
                       );
                     }
 
