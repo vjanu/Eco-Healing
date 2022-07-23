@@ -47,7 +47,7 @@ class _VerifyEmailPageState extends State<VerifyEmail> {
   Future sendVerificationEmail() async {
     final user = FirebaseAuth.instance.currentUser;
     try {
-      // final user = FirebaseAuth.instance.currentUser;
+     // final user = FirebaseAuth.instance.currentUser;
       await user?.sendEmailVerification();
       setState(() => canResenEmail = false);
       await Future.delayed(Duration(seconds: 5));
@@ -74,43 +74,47 @@ class _VerifyEmailPageState extends State<VerifyEmail> {
                       'A verification email has been sent to your email address'),
                   SizedBox(height: 24),
                   ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: Size.fromHeight(50),
-                      primary: Colors.lightGreen,
-                    ),
-                    icon: Icon(Icons.email, size: 32),
-                    label: const Text(
-                      'Resent Email',
-                      style: TextStyle(fontSize: 24),
-                    ),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size.fromHeight(50),
+                        primary: Colors.lightGreen,
+                      ),
+                      icon: Icon(Icons.email, size: 32),
+                      label: const Text(
+                        'Resent Email',
+                        style: TextStyle(
+                            fontSize: 24),
+                      ),
 
-                    onPressed: () {
-                      sendVerificationEmail();
-                    },
-                    //onPressed: ()=>sendVerificationEmail()
-                    // onPressed: () {
-                    //   if (canResenEmail) {
-                    //     sendVerificationEmail();
-                    // }
-                  ),
+                      onPressed: () {
+              sendVerificationEmail();
+            },
+                      //onPressed: ()=>sendVerificationEmail()
+                      // onPressed: () {
+                      //   if (canResenEmail) {
+                      //     sendVerificationEmail();
+                        // }
+                      ),
                   const SizedBox(height: 8),
                   TextButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: Size.fromHeight(50),
+                      style: ElevatedButton.styleFrom(
+                          minimumSize: Size.fromHeight(50),
                     ),
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(fontSize: 24, color: Colors.lightGreen),
-                    ),
-                    onPressed: () {
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(fontSize: 24,color:Colors.lightGreen),
+                      ),
+                  
+                      onPressed: () {
                       FirebaseAuth.instance.signOut().then((value) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (c) => const AuthScreen()));
-                      });
-                    },
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (c) => const AuthScreen()));
+                      
+                    });
+                  },
                   ),
+                  
                 ],
               )));
 }
