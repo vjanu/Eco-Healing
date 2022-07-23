@@ -57,9 +57,9 @@ class _MySplashScreenState extends State<MySplashScreen> {
           SizedBox(
             height: 205,
           ),
-          Image.asset("images/ecohealing.png", scale: 0.5),
+          Image.asset("images/Logo_ECO_HEALING.png", scale: 0.5),
           const SizedBox(
-            height: 250,
+            height: 70,
           ),
           const Icon(
             Icons.tips_and_updates,
@@ -71,10 +71,7 @@ class _MySplashScreenState extends State<MySplashScreen> {
             child: Text(
               s,
               textAlign: TextAlign.justify,
-              style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Varela'),
+              style: const TextStyle(fontSize: 15, fontFamily: 'Varela'),
             ),
           ),
         ]),

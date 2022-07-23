@@ -43,6 +43,7 @@ class _add_electronicState extends State<add_electronic> {
   Position? position;
   List<Placemark>? placeMarks;
   String completeAddress = "";
+  String time = DateTime.now().millisecondsSinceEpoch.toString();
 
   getCurrentLocation() async {
     Position newPosition = await Geolocator.getCurrentPosition(
@@ -99,12 +100,12 @@ class _add_electronicState extends State<add_electronic> {
       "details": detailController.text.trim(),
       "address": addressController.text.trim(),
       "cost": costController.text,
-      "id": uid,
+      "id": time,
       "email": uemail,
       "filepath": path,
       "filename": filename,
     };
-    FirebaseFirestore.instance.collection("electronic").doc().set(data);
+    FirebaseFirestore.instance.collection("electronic").doc(time).set(data);
     firebase_storage.FirebaseStorage.instance
         .ref('projects/electronics/$filename')
         .putFile(file!);

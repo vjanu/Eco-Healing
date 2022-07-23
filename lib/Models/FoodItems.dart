@@ -11,7 +11,7 @@ class Fooditems {
   String? email;
   String? filename;
   String? downloadUrl;
-
+  String? itemid;
   Fooditems({
     this.name,
     this.address,
@@ -21,6 +21,7 @@ class Fooditems {
     this.id,
     this.filename,
     this.downloadUrl,
+    this.itemid,
   });
 
   static Fooditems fromJSON(Map<String, dynamic> json) => Fooditems(
@@ -46,6 +47,7 @@ class Fooditems {
     email = snapshot.get('email');
     filename = snapshot.get('filename');
     // downloadUrl = snapshot.get('downloadUrl');
+    //itemid = snapshot.get('itemid');
   }
 
   Map<String, dynamic> toJson() {

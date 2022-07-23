@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eco_healing/Models/ElectronicItems.dart';
+import 'package:eco_healing/Screens/update_electronic.dart';
 import 'package:eco_healing/Widget/electronic_item_screen.dart';
 import 'package:eco_healing/Widget/food_item_screen.dart';
 import 'package:eco_healing/Widget/cloth_item_screen.dart';
@@ -201,10 +202,18 @@ class _myListingState extends State<myListing> {
                 ),
                 IconButton(
                   icon: Icon(Icons.delete),
-                  onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => foodItemScreen(fooditems))),
+                  onPressed: () async {
+                    String? id = fooditems.id;
+                    FirebaseFirestore.instance
+                        .collection('food')
+                        .doc(id)
+                        .delete()
+                        .then(
+                          (doc) => print("Document deleted"),
+                          onError: (e) => print("Error updating document $e"),
+                        );
+                    ;
+                  },
                 ),
               ],
             ),
@@ -234,7 +243,35 @@ class _myListingState extends State<myListing> {
               ),
             ),
             subtitle: Text(clothitems.address!),
-            trailing: const Icon(Icons.keyboard_arrow_right),
+            trailing: SizedBox(
+              width: 107,
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.edit),
+                    onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => itemScreen(clothitems))),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () async {
+                      String? id = clothitems.id;
+                      FirebaseFirestore.instance
+                          .collection('cloth')
+                          .doc(id)
+                          .delete()
+                          .then(
+                            (doc) => print("Document deleted"),
+                            onError: (e) => print("Error updating document $e"),
+                          );
+                      ;
+                    },
+                  ),
+                ],
+              ),
+            ),
             onTap: () {
               Navigator.push(
                   context,
@@ -259,7 +296,35 @@ class _myListingState extends State<myListing> {
               ),
             ),
             subtitle: Text(electronicitems.address!),
-            trailing: const Icon(Icons.keyboard_arrow_right),
+            trailing: SizedBox(
+              width: 107,
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.edit),
+                    onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => updateItem(electronicitems))),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () async {
+                      String? id = electronicitems.id;
+                      FirebaseFirestore.instance
+                          .collection('electronic')
+                          .doc(id)
+                          .delete()
+                          .then(
+                            (doc) => print("Document deleted"),
+                            onError: (e) => print("Error updating document $e"),
+                          );
+                      ;
+                    },
+                  ),
+                ],
+              ),
+            ),
             onTap: () {
               Navigator.push(
                   context,

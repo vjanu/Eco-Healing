@@ -44,6 +44,7 @@ class _add_clothState extends State<add_cloth> {
   Position? position;
   List<Placemark>? placeMarks;
   String completeAddress = "";
+  String time = DateTime.now().millisecondsSinceEpoch.toString();
 
   getCurrentLocation() async {
     Position newPosition = await Geolocator.getCurrentPosition(
@@ -100,12 +101,12 @@ class _add_clothState extends State<add_cloth> {
       "details": detailController.text.trim(),
       "address": addressController.text.trim(),
       "cost": costController.text,
-      "id": uid,
+      "id": time,
       "email": uemail,
       "filepath": path,
       "filename": filename,
     };
-    FirebaseFirestore.instance.collection("cloth").doc().set(data);
+    FirebaseFirestore.instance.collection("cloth").doc(time).set(data);
     firebase_storage.FirebaseStorage.instance
         .ref('projects/cloth/$filename')
         .putFile(file!);

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:eco_healing/auth/VerifyEmail.dart';
 import 'package:eco_healing/mainScreen/HomeScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eco_healing/Widget/custom_field.dart';

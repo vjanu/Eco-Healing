@@ -97,6 +97,26 @@ class electronicItemScreen extends StatelessWidget {
                   fontSize: 14,
                 ),
               ),
+              Container(
+                  constraints: BoxConstraints(
+                    maxHeight: height / 10,
+                  ),
+                  decoration: const BoxDecoration(
+                      border:
+                          Border(bottom: BorderSide(color: Colors.black12))),
+                  width: width,
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Text(
+                    _electronicitems.email!,
+                    softWrap: true,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  )),
+              const SizedBox(
+                height: 10,
+              ),
               // ---------- Details ------------------
               const Text(
                 "Item Details",
@@ -124,28 +144,6 @@ class electronicItemScreen extends StatelessWidget {
               const SizedBox(
                 height: 10,
               ),
-              //email
-              Container(
-                  constraints: BoxConstraints(
-                    maxHeight: height / 10,
-                  ),
-                  decoration: const BoxDecoration(
-                      border:
-                          Border(bottom: BorderSide(color: Colors.black12))),
-                  width: width,
-                  padding: const EdgeInsets.symmetric(vertical: 2),
-                  child: Text(
-                    _electronicitems.email!,
-                    softWrap: true,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
-                  )),
-              const SizedBox(
-                height: 10,
-              ),
-              //Email
               // ---------- client Address --------------
               const Text(
                 "Address",

@@ -33,6 +33,7 @@ class MyDrawer extends StatelessWidget {
                     style: TextStyle(color: Colors.black),
                   ),
                   onTap: () {
+                    Navigator.pop(context);
                     Navigator.push(context,
                         MaterialPageRoute(builder: (c) => const myListing()));
                   },
