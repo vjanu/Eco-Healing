@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eco_healing/Models/ElectronicItems.dart';
 import 'package:eco_healing/Screens/update_electronic.dart';
+import 'package:eco_healing/Screens/update_food.dart';
+import 'package:eco_healing/Screens/update_cloth.dart';
 import 'package:eco_healing/Widget/electronic_item_screen.dart';
 import 'package:eco_healing/Widget/food_item_screen.dart';
 import 'package:eco_healing/Widget/cloth_item_screen.dart';
@@ -198,7 +200,7 @@ class _myListingState extends State<myListing> {
                   onPressed: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => foodItemScreen(fooditems))),
+                          builder: (context) => updateFoodItem(fooditems))),
                 ),
                 IconButton(
                   icon: Icon(Icons.delete),
@@ -252,7 +254,7 @@ class _myListingState extends State<myListing> {
                     onPressed: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => itemScreen(clothitems))),
+                            builder: (context) => updateClothItem(clothitems))),
                   ),
                   IconButton(
                     icon: Icon(Icons.delete),
