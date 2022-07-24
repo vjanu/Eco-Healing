@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:eco_healing/Widget/custom_field.dart';
 import 'package:eco_healing/global/global.dart';
+import 'package:eco_healing/auth/VerifyEmail.dart';
 
 import '../Screens/forgot_password_page.dart';
 // import 'package:flutter/services.dart';
@@ -24,7 +25,14 @@ class _login_pageState extends State<login_page> {
 
   formValidation() {
     if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
-      loginNow();
+      final user = FirebaseAuth.instance.currentUser;
+      if (user?.emailVerified ?? true)
+        loginNow();
+      else {
+        ErrorDialog(
+          message: "Please write email/password.",
+        );
+      }
     } else {
       showDialog(
           context: context,
@@ -68,8 +76,14 @@ class _login_pageState extends State<login_page> {
       // ignore: use_build_context_synchronously
       Navigator.pop(context);
       // ignore: use_build_context_synchronously
-      Navigator.push(
-          context, MaterialPageRoute(builder: (c) => const HomeScreen()));
+
+      if (currentUser!.emailVerified) {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (c) => const HomeScreen()));
+      } else {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (c) => VerifyEmail()));
+      }
       // });
     }
   }
@@ -92,75 +106,92 @@ class _login_pageState extends State<login_page> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Container(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: EdgeInsets.all(15),
-              child: Image.asset(
-                "images/healinghands.jpeg", //"images/loginpage.png",
-                height: 270,
+    return Container(
+      child: Container(
+        //margin: EdgeInsets.all(20),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Image.asset(
+                "images/Logo-white.png",
+                scale: 1,
+                width: 250,
+                height: 250,
               ),
-            ),
-          ),
-          Form(
-              key: _formkey,
-              child: Column(
-                children: [
-                  Customfield(
-                    data: Icons.email,
-                    controller: emailController,
-                    hintText: "Email",
-                    isObsecure: false,
+              Form(
+                  key: _formkey,
+                  child: Column(
+                    children: [
+                      Customfield(
+                        data: Icons.email,
+                        controller: emailController,
+                        hintText: "Email",
+                        isObsecure: false,
+                      ),
+                      Customfield(
+                        data: Icons.lock,
+                        controller: passwordController,
+                        hintText: "Password",
+                        isObsecure: true,
+                      ),
+                    ],
+                  )),
+              SizedBox(
+                height: 5,
+              ),
+              GestureDetector(
+                child: const Text(
+                  'Forgot Password ?',
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: 15,
                   ),
-                  Customfield(
-                    data: Icons.lock,
-                    controller: passwordController,
-                    hintText: "Password",
-                    isObsecure: true,
+                ),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ForgotPasswordPage(),
+                      ));
+                },
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        colors: [Colors.blueAccent, Colors.deepPurple]),
+                    borderRadius: BorderRadius.circular(50),
+                    color: Colors.redAccent),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      primary: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      textStyle: const TextStyle(fontSize: 20),
+                      minimumSize: const Size(200, 50),
+                      onPrimary: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15))),
+                  onPressed: () {
+                    formValidation();
+                  },
+                  child: const Text(
+                    "Login",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ],
-              )),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              primary: Colors.cyan,
-              padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-            ),
-            onPressed: () {
-              formValidation();
-            },
-            child: const Text(
-              "Login",
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-          ),
-          const SizedBox(
-            height: 30,
-          ),
-          GestureDetector(
-            child: const Text(
-              'Forgot Password ?',
-              style: TextStyle(
-                decoration: TextDecoration.underline,
-                color: Colors.lightBlueAccent,
-                fontSize: 20,
+              const SizedBox(
+                height: 30,
               ),
-            ),
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ForgotPasswordPage(),
-                  ));
-            },
-          )
-        ],
+            ],
+          ),
+        ),
       ),
     );
   }

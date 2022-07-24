@@ -193,8 +193,12 @@ class _add_electronicState extends State<add_electronic> {
                       },
                       style: ElevatedButton.styleFrom(
                         primary: Colors.blueAccent,
+                        shadowColor: Colors.blueAccent,
+                        textStyle: const TextStyle(fontSize: 15),
+                        minimumSize: const Size(125, 35),
+                        onPrimary: Colors.white,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
+                          borderRadius: BorderRadius.circular(15),
                         ),
                       ),
                     ),
@@ -213,22 +217,37 @@ class _add_electronicState extends State<add_electronic> {
 
                   // ----------- submit button ------------
                   Center(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          textStyle: const TextStyle(fontSize: 20),
-                          minimumSize: const Size(200, 50),
-                          primary: Colors.black,
-                          onPrimary: Colors.white,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15))),
-                      onPressed: () async {
-                        final isValid = _formKey.currentState!.validate();
-                        if (isValid == true) {
-                          saveDataToFirebase();
-                          Navigator.pop(context);
-                        }
-                      },
-                      child: const Text('Submit'),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              colors: [Colors.blueAccent, Colors.deepPurple]),
+                          borderRadius: BorderRadius.circular(50),
+                          color: Colors.redAccent),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            primary: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            textStyle: const TextStyle(fontSize: 20),
+                            minimumSize: const Size(200, 50),
+                            onPrimary: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15))),
+                        onPressed: () async {
+                          final isValid = _formKey.currentState!.validate();
+                          if (isValid == true && filename != "") {
+                            saveDataToFirebase();
+                            Navigator.pop(context);
+                          }
+                          if (isValid == true && filename == "") {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Please Upload an image'),
+                              ),
+                            );
+                          }
+                        },
+                        child: const Text('Submit'),
+                      ),
                     ),
                   ),
                 ],
@@ -313,13 +332,13 @@ class _add_electronicState extends State<add_electronic> {
         controller: costController,
         validator: (costController) {
           if (costController!.isEmpty) {
-            return 'Enter the Project Cost';
+            return 'Enter the Cost';
           } else {
             return null;
           }
         },
         decoration: InputDecoration(
-            hintText: 'Project Cost',
+            hintText: 'Cost',
             labelText: 'Cost',
             prefixIcon: const Icon(
               Icons.attach_money,
@@ -337,6 +356,14 @@ class _add_electronicState extends State<add_electronic> {
         keyboardType: TextInputType.number,
       );
   Widget UploadPicture() => ElevatedButton(
+        style: ElevatedButton.styleFrom(
+            primary: Colors.blueAccent,
+            shadowColor: Colors.blueAccent,
+            textStyle: const TextStyle(fontSize: 15),
+            minimumSize: const Size(125, 35),
+            onPrimary: Colors.white,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15))),
         onPressed: () {
           getImageData();
         },

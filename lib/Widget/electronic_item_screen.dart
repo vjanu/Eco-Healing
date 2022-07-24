@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:eco_healing/Models/ElectronicItems.dart';
 import 'package:eco_healing/Models/FoodItems.dart';
 import 'package:eco_healing/Models/ClothItems.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../global/global.dart';
 
 // ignore: camel_case_types
 class electronicItemScreen extends StatelessWidget {
@@ -36,7 +39,7 @@ class electronicItemScreen extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.fromLTRB(10.0, 5, 10.0, 0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -64,6 +67,9 @@ class electronicItemScreen extends StatelessWidget {
                     }
                     return Container();
                   }),
+              const SizedBox(
+                height: 10,
+              ),
               // ---------- client Name --------------
               const Text(
                 "Item Name",
@@ -82,32 +88,6 @@ class electronicItemScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 2),
                   child: Text(
                     _electronicitems.name!,
-                    softWrap: true,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
-                  )),
-              const SizedBox(
-                height: 10,
-              ),
-              const Text(
-                "Uploader email",
-                style: TextStyle(
-                  fontSize: 14,
-                ),
-              ),
-              Container(
-                  constraints: BoxConstraints(
-                    maxHeight: height / 10,
-                  ),
-                  decoration: const BoxDecoration(
-                      border:
-                          Border(bottom: BorderSide(color: Colors.black12))),
-                  width: width,
-                  padding: const EdgeInsets.symmetric(vertical: 2),
-                  child: Text(
-                    _electronicitems.email!,
                     softWrap: true,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
@@ -144,6 +124,33 @@ class electronicItemScreen extends StatelessWidget {
               const SizedBox(
                 height: 10,
               ),
+
+              const Text(
+                "Uploader email",
+                style: TextStyle(
+                  fontSize: 14,
+                ),
+              ),
+              Container(
+                constraints: BoxConstraints(
+                  maxHeight: height / 10,
+                ),
+                decoration: const BoxDecoration(
+                    border: Border(bottom: BorderSide(color: Colors.black12))),
+                width: width,
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                child: Text(
+                  _electronicitems.email!,
+                  softWrap: true,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
               // ---------- client Address --------------
               const Text(
                 "Address",
@@ -172,7 +179,6 @@ class electronicItemScreen extends StatelessWidget {
               const SizedBox(
                 height: 10,
               ),
-
               // ---------- Project stauts --------------
               const Text(
                 "Item Cost",
@@ -199,12 +205,49 @@ class electronicItemScreen extends StatelessWidget {
                     ),
                   )),
               const SizedBox(
-                height: 10,
+                height: 20,
               ),
+              if (_electronicitems.email != firebaseAuth.currentUser!.email)
+                Center(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        textStyle: const TextStyle(fontSize: 15),
+                        minimumSize: const Size(180, 40),
+                        primary: Colors.black,
+                        onPrimary: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15))),
+                    onPressed: () async {
+                      sendemail();
+                    },
+                    child: const Text('Enquire about this post'),
+                  ),
+                ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  void sendemail() {
+    final Uri emailLaunchUri = Uri(
+      scheme: 'mailto',
+      path: _electronicitems.email!,
+      queryParameters: {
+        'subject': 'Example Subject & Symbols are allowed!',
+      },
+    );
+    launchUrl(emailLaunchUri);
+  }
+
+  void sendsms() {
+    final Uri smsLaunchUri = Uri(
+      scheme: 'sms',
+      path: '0118 999 881 999 119 7253',
+      queryParameters: <String, String>{
+        'body': Uri.encodeComponent('Example Subject & Symbols are allowed!'),
+      },
     );
   }
 }

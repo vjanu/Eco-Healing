@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:eco_healing/Models/ElectronicItems.dart';
 import 'package:eco_healing/Models/FoodItems.dart';
 import 'package:eco_healing/Models/ClothItems.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../global/global.dart';
 
 // ignore: camel_case_types
 class foodItemScreen extends StatelessWidget {
@@ -36,7 +39,7 @@ class foodItemScreen extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.fromLTRB(10.0, 5, 10.0, 0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -61,7 +64,9 @@ class foodItemScreen extends StatelessWidget {
                         !snapshot.hasData) {
                       return Center(child: CircularProgressIndicator());
                     }
-                    return Container();
+                    return Container(
+                      child: Text('No Image'),
+                    );
                   }),
               const SizedBox(
                 height: 10,
@@ -203,13 +208,41 @@ class foodItemScreen extends StatelessWidget {
                       fontSize: 20,
                     ),
                   )),
+
               const SizedBox(
-                height: 10,
+                height: 20,
               ),
+              if (_fooditems.email != firebaseAuth.currentUser!.email)
+                Center(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        textStyle: const TextStyle(fontSize: 15),
+                        minimumSize: const Size(180, 40),
+                        primary: Colors.black,
+                        onPrimary: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15))),
+                    onPressed: () async {
+                      sendemail();
+                    },
+                    child: const Text('Enquire about this post'),
+                  ),
+                ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  void sendemail() {
+    final Uri emailLaunchUri = Uri(
+      scheme: 'mailto',
+      path: _fooditems.email!,
+      queryParameters: {
+        'subject': 'Example Subject & Symbols are allowed!',
+      },
+    );
+    launchUrl(emailLaunchUri);
   }
 }

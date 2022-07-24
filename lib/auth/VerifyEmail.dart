@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:eco_healing/mainScreen/HomeScreen.dart';
 import 'package:eco_healing/auth/auth_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:eco_healing/global/global.dart';
 
 class VerifyEmail extends StatefulWidget {
   @override
@@ -47,7 +48,7 @@ class _VerifyEmailPageState extends State<VerifyEmail> {
   Future sendVerificationEmail() async {
     final user = FirebaseAuth.instance.currentUser;
     try {
-     // final user = FirebaseAuth.instance.currentUser;
+      // final user = FirebaseAuth.instance.currentUser;
       await user?.sendEmailVerification();
       setState(() => canResenEmail = false);
       await Future.delayed(Duration(seconds: 5));
@@ -60,61 +61,64 @@ class _VerifyEmailPageState extends State<VerifyEmail> {
   @override
   Widget build(BuildContext context) => isEmailVerified
       ? HomeScreen()
-      : Scaffold(
-          appBar: AppBar(
-            title: Text('Verify Email'),
-            backgroundColor: Colors.lightGreen,
-          ),
-          body: Padding(
-              padding: EdgeInsets.all(16),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                      'A verification email has been sent to your email address'),
-                  SizedBox(height: 24),
-                  ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: Size.fromHeight(50),
-                        primary: Colors.lightGreen,
-                      ),
-                      icon: Icon(Icons.email, size: 32),
-                      label: const Text(
-                        'Resent Email',
-                        style: TextStyle(
-                            fontSize: 24),
-                      ),
+      : WillPopScope(
+          onWillPop: () async {
+            print('false');
+            return false;
+          },
+          child: Scaffold(
+              appBar: AppBar(
+                  title: Center(child: Text('Verify Email')),
+                  backgroundColor: Colors.lightGreen,
+                  automaticallyImplyLeading: false),
+              body: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                          'A verification email has been sent to your email address'),
+                      SizedBox(height: 24),
+                      ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: Size.fromHeight(50),
+                          primary: Colors.lightGreen,
+                        ),
+                        icon: Icon(Icons.email, size: 32),
+                        label: const Text(
+                          'Resent Email',
+                          style: TextStyle(fontSize: 24),
+                        ),
 
-                      onPressed: () {
-              sendVerificationEmail();
-            },
-                      //onPressed: ()=>sendVerificationEmail()
-                      // onPressed: () {
-                      //   if (canResenEmail) {
-                      //     sendVerificationEmail();
+                        onPressed: () {
+                          sendVerificationEmail();
+                        },
+                        //onPressed: ()=>sendVerificationEmail()
+                        // onPressed: () {
+                        //   if (canResenEmail) {
+                        //     sendVerificationEmail();
                         // }
                       ),
-                  const SizedBox(height: 8),
-                  TextButton(
-                      style: ElevatedButton.styleFrom(
+                      const SizedBox(height: 8),
+                      TextButton(
+                        style: ElevatedButton.styleFrom(
                           minimumSize: Size.fromHeight(50),
-                    ),
-                      child: const Text(
-                        'Cancel',
-                        style: TextStyle(fontSize: 24,color:Colors.lightGreen),
+                        ),
+                        child: const Text(
+                          'Cancel',
+                          style:
+                              TextStyle(fontSize: 24, color: Colors.lightGreen),
+                        ),
+                        onPressed: () {
+                          FirebaseAuth.instance.signOut().then((value) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (c) => const AuthScreen()));
+                          });
+                        },
                       ),
-                  
-                      onPressed: () {
-                      FirebaseAuth.instance.signOut().then((value) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (c) => const AuthScreen()));
-                      
-                    });
-                  },
-                  ),
-                  
-                ],
-              )));
+                    ],
+                  ))),
+        );
 }
