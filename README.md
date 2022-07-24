@@ -1,4 +1,4 @@
-# Eco_healing
+# Eco Healing: One stop marketplace for reduce and reuse waste
 
 Eco-Healing is going to provide a single platform for two different users, where user can react as a buyer/rental/taker or user can react as a seller/Lessees/donor, Eco-Healing is going to promote environment healing and reduce the carbon emission by stopping the wastage of food/cloth/E-waste that different sectors and peoples do in their day-to-day life. User can share the items photo with detailed descriptions like expiry date for food, category, and sub section of items with its recent condition.
 
