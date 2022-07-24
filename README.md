@@ -1,4 +1,4 @@
-# Eco Healing: One stop marketplace for reduce and reuse waste
+# Eco Healing: Onestop marketplace for reduce and reuse waste
 
 ![alt text](./images/Logo_ECO_HEALING.png)
 
