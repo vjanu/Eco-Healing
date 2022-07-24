@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:eco_healing/auth/VerifyEmail.dart';
 import 'package:eco_healing/auth/auth_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,12 +17,17 @@ class MySplashScreen extends StatefulWidget {
 
 class _MySplashScreenState extends State<MySplashScreen> {
   startTimer() {
-    Timer(const Duration(seconds: 6), () async {
+    Timer(const Duration(seconds: 4), () async {
       // Navigator.push(
       //     context, MaterialPageRoute(builder: (c) => const AuthScreen()));
-      if (firebaseAuth.currentUser != null) {
+      if (firebaseAuth.currentUser != null &&
+          firebaseAuth.currentUser!.emailVerified) {
         Navigator.push(
             context, MaterialPageRoute(builder: (c) => const HomeScreen()));
+      } else if (firebaseAuth.currentUser != null &&
+          !(firebaseAuth.currentUser!.emailVerified)) {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (c) => VerifyEmail()));
       } else {
         Navigator.push(
             context, MaterialPageRoute(builder: (c) => const AuthScreen()));
@@ -47,6 +53,7 @@ class _MySplashScreenState extends State<MySplashScreen> {
       'Shop wisely. Buy less plastic and bring a reusable shopping bag.',
       'Plant a tree. Trees provide food and oxygen. They help save energy, clean the air, and help combat climate change.',
       'Bike more. Drive less.',
+      'Donate unessential items',
     ];
     int randomNumber = random.nextInt(strArr.length);
     String s = strArr.elementAt(randomNumber);

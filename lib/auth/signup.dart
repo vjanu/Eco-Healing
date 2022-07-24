@@ -264,7 +264,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           getCurrentLocation();
                         },
                         style: ElevatedButton.styleFrom(
-                            primary: Colors.amber,
+                            primary: Colors.blueAccent,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ))))
@@ -273,19 +273,30 @@ class _SignupScreenState extends State<SignupScreen> {
             SizedBox(
               height: 30,
             ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                primary: Colors.cyan,
-                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-              ),
-              onPressed: () {
-                formValidation();
-              },
-              child: const Text(
-                "Register",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+            Container(
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      colors: [Colors.blueAccent, Colors.deepPurple]),
+                  borderRadius: BorderRadius.circular(50),
+                  color: Colors.redAccent),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    primary: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    textStyle: const TextStyle(fontSize: 20),
+                    minimumSize: const Size(200, 50),
+                    onPrimary: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15))),
+                onPressed: () {
+                  formValidation();
+                },
+                child: const Text(
+                  "Register",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),

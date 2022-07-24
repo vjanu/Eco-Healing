@@ -1,5 +1,6 @@
 // ignore_for_file: use_key_in_widget_constructors
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:eco_healing/Models/ElectronicItems.dart';
@@ -7,10 +8,13 @@ import 'package:eco_healing/Models/FoodItems.dart';
 import 'package:eco_healing/Models/ClothItems.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:url_launcher/url_launcher.dart';
+import 'package:eco_healing/global/global.dart';
 
 // ignore: camel_case_types
 class itemScreen extends StatelessWidget {
   final Clothitems _clothitems;
+
   void initState() {
     initState();
   }
@@ -134,22 +138,22 @@ class itemScreen extends StatelessWidget {
                 ),
               ),
               Container(
-                  constraints: BoxConstraints(
-                    maxHeight: height / 10,
+                constraints: BoxConstraints(
+                  maxHeight: height / 10,
+                ),
+                decoration: const BoxDecoration(
+                    border: Border(bottom: BorderSide(color: Colors.black12))),
+                width: width,
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                child: Text(
+                  _clothitems.email!,
+                  softWrap: true,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
                   ),
-                  decoration: const BoxDecoration(
-                      border:
-                          Border(bottom: BorderSide(color: Colors.black12))),
-                  width: width,
-                  padding: const EdgeInsets.symmetric(vertical: 2),
-                  child: Text(
-                    _clothitems.email!,
-                    softWrap: true,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
-                  )),
+                ),
+              ),
               const SizedBox(
                 height: 10,
               ),
@@ -210,23 +214,39 @@ class itemScreen extends StatelessWidget {
                     ),
                   )),
               const SizedBox(
-                height: 10,
+                height: 20,
               ),
-
-              // Container(
-              //     width: 300,
-              //     height: 250,
-              //     child: Image.network(
-              //       firebase_storage
-              //           .FirebaseStorage.instance
-              //           .ref('projects/permit/$pdfDrawing2FileName')
-              //           .getDownloadURL();.data!,
-              //       fit: BoxFit.cover,
-              //     ));
+              if (_clothitems.email != firebaseAuth.currentUser!.email)
+                Center(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        textStyle: const TextStyle(fontSize: 15),
+                        minimumSize: const Size(180, 40),
+                        primary: Colors.black,
+                        onPrimary: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15))),
+                    onPressed: () async {
+                      sendemail();
+                    },
+                    child: const Text('Enquire about this post'),
+                  ),
+                ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  void sendemail() {
+    final Uri emailLaunchUri = Uri(
+      scheme: 'mailto',
+      path: _clothitems.email!,
+      queryParameters: {
+        'subject': 'Example Subject & Symbols are allowed!',
+      },
+    );
+    launchUrl(emailLaunchUri);
   }
 }
