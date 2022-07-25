@@ -10,6 +10,7 @@ import 'package:eco_healing/add_items/add_cloth_items.dart';
 import 'package:eco_healing/add_items/add_electronic_items.dart';
 import 'package:eco_healing/mainScreen/HomeScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:eco_healing/add_items/add_food_items.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -214,6 +215,9 @@ class _myListingState extends State<myListing> {
                           (doc) => print("Document deleted"),
                           onError: (e) => print("Error updating document $e"),
                         );
+                    FirebaseStorage.instance
+                        .ref('projects/food/${fooditems.filename}')
+                        .delete();
                     ;
                   },
                 ),
@@ -268,6 +272,9 @@ class _myListingState extends State<myListing> {
                             (doc) => print("Document deleted"),
                             onError: (e) => print("Error updating document $e"),
                           );
+                      FirebaseStorage.instance
+                          .ref('projects/cloth/${clothitems.filename}')
+                          .delete();
                       ;
                     },
                   ),
@@ -321,6 +328,10 @@ class _myListingState extends State<myListing> {
                             (doc) => print("Document deleted"),
                             onError: (e) => print("Error updating document $e"),
                           );
+                      FirebaseStorage.instance
+                          .ref(
+                              'projects/electronic/${electronicitems.filename}')
+                          .delete();
                       ;
                     },
                   ),

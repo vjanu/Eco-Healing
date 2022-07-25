@@ -120,6 +120,11 @@ class _updateClothItemState extends State<updateClothItem> {
     firebase_storage.FirebaseStorage.instance
         .ref('projects/cloth/$filename')
         .putFile(file!);
+    if (filename != widget.clothitems.filename) {
+      firebase_storage.FirebaseStorage.instance
+          .ref('projects/cloth/${widget.clothitems.filename}')
+          .delete();
+    }
   }
 
   @override
