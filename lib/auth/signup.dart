@@ -49,63 +49,41 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   Future<void> formValidation() async {
-    if (imageXFile == null) {
+    if (passwordcontroller.text != confirmpasswordcontroller.text) {
       showDialog(
           context: context,
           builder: (c) {
             return ErrorDialog(
-              message: "Please select an image",
+              message: "Password do not match",
+            );
+          });
+    } else if (!validateStructure(passwordcontroller.text)) {
+      showDialog(
+          context: context,
+          builder: (c) {
+            return ErrorDialog(
+              message:
+                  "Password should be at-least 8 or longer and should have upper case letter,lower case letter, number and a special symbol",
+            );
+          });
+    } else if (passwordcontroller.text.isEmpty ||
+        confirmpasswordcontroller.text.isEmpty) {
+      showDialog(
+          context: context,
+          builder: (c) {
+            return ErrorDialog(
+              message: "Password field cannot be empty!",
             );
           });
     } else {
-      if (passwordcontroller.text != confirmpasswordcontroller.text) {
-        showDialog(
-            context: context,
-            builder: (c) {
-              return ErrorDialog(
-                message: "Password do not match",
-              );
-            });
-      } else if (!validateStructure(passwordcontroller.text)) {
-        showDialog(
-            context: context,
-            builder: (c) {
-              return ErrorDialog(
-                message:
-                    "Password should be at-least 8 or longer and should have upper case letter,lower case letter, number and a special symbol",
-              );
-            });
-      } else if (passwordcontroller.text.isEmpty ||
-          confirmpasswordcontroller.text.isEmpty) {
-        showDialog(
-            context: context,
-            builder: (c) {
-              return ErrorDialog(
-                message: "Password field cannot be empty!",
-              );
-            });
-      } else {
-        showDialog(
-            context: context,
-            builder: (c) {
-              return LoadDialog(
-                message: "Registering Account",
-              );
-            });
-        String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-        fStorage.Reference reference = fStorage.FirebaseStorage.instance
-            .ref()
-            .child("Users")
-            .child(fileName);
-        fStorage.UploadTask uploadTask =
-            reference.putFile(File(imageXFile!.path));
-        fStorage.TaskSnapshot taskSnapshot =
-            await uploadTask.whenComplete(() {});
-        await taskSnapshot.ref.getDownloadURL().then((url) {
-          usersImageUrl = url;
-          authenticateUserAndSignUp();
-        });
-      }
+      showDialog(
+          context: context,
+          builder: (c) {
+            return LoadDialog(
+              message: "Registering Account",
+            );
+          });
+      authenticateUserAndSignUp();
     }
   }
 
