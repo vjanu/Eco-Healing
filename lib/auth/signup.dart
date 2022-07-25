@@ -1,19 +1,16 @@
 import 'dart:io';
 import 'package:eco_healing/auth/VerifyEmail.dart';
-import 'package:eco_healing/mainScreen/HomeScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eco_healing/Widget/custom_field.dart';
 import 'package:eco_healing/Widget/loading_dialog.dart';
 import 'package:eco_healing/Widget/error_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as fStorage;
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:eco_healing/auth/VerifyEmail.dart';
+import 'package:flutter_pw_validator/flutter_pw_validator.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -28,13 +25,7 @@ class _SignupScreenState extends State<SignupScreen> {
   TextEditingController namecontroller = TextEditingController();
   TextEditingController emailcontroller = TextEditingController();
   TextEditingController passwordcontroller = TextEditingController();
-
   TextEditingController confirmpasswordcontroller = TextEditingController();
-
-  TextEditingController phonecontroller = TextEditingController();
-
-  TextEditingController locationcontroller = TextEditingController();
-
   XFile? imageXFile;
   final ImagePicker _picker = ImagePicker();
 
@@ -51,20 +42,10 @@ class _SignupScreenState extends State<SignupScreen> {
     });
   }
 
-  getCurrentLocation() async {
-    Position newPosition = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
-    position = newPosition;
-
-    placeMarks =
-        await placemarkFromCoordinates(position!.latitude, position!.longitude);
-
-    Placemark pMark = placeMarks![0];
-
-    completeAddress =
-        '${pMark.subThoroughfare} ${pMark.thoroughfare},  ${pMark.subLocality} ${pMark.locality}, ${pMark.subAdministrativeArea}, ${pMark.administrativeArea} ${pMark.postalCode}, ${pMark.country}';
-    locationcontroller.text = completeAddress;
+  bool validateStructure(String value) {
+    String pattern = r"(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W)";
+    RegExp regExp = new RegExp(pattern);
+    return regExp.hasMatch(value);
   }
 
   Future<void> formValidation() async {
@@ -85,6 +66,15 @@ class _SignupScreenState extends State<SignupScreen> {
                 message: "Password do not match",
               );
             });
+      } else if (!validateStructure(passwordcontroller.text)) {
+        showDialog(
+            context: context,
+            builder: (c) {
+              return ErrorDialog(
+                message:
+                    "Password should be at-least 8 or longer and should have upper case letter,lower case letter, number and a special symbol",
+              );
+            });
       } else if (passwordcontroller.text.isEmpty ||
           confirmpasswordcontroller.text.isEmpty) {
         showDialog(
@@ -92,14 +82,6 @@ class _SignupScreenState extends State<SignupScreen> {
             builder: (c) {
               return ErrorDialog(
                 message: "Password field cannot be empty!",
-              );
-            });
-      } else if (emailcontroller.text.isEmpty) {
-        showDialog(
-            context: context,
-            builder: (c) {
-              return ErrorDialog(
-                message: "Email field is empty!",
               );
             });
       } else {
@@ -121,7 +103,6 @@ class _SignupScreenState extends State<SignupScreen> {
             await uploadTask.whenComplete(() {});
         await taskSnapshot.ref.getDownloadURL().then((url) {
           usersImageUrl = url;
-
           authenticateUserAndSignUp();
         });
       }
@@ -148,11 +129,9 @@ class _SignupScreenState extends State<SignupScreen> {
             );
           });
     });
-
     if (currentUser != null) {
       saveDataToFirestore(currentUser!).then((value) {
         Navigator.pop(context);
-
         Route newRoute = MaterialPageRoute(builder: (c) => VerifyEmail());
         Navigator.pushReplacement(context, newRoute);
       });
@@ -164,16 +143,10 @@ class _SignupScreenState extends State<SignupScreen> {
       "userID": currentUser.uid,
       "userEmail": emailcontroller.text.trim(),
       "userName": namecontroller.text.trim(),
-      "phone": phonecontroller.text.trim(),
       "password": passwordcontroller.text.trim(),
-      "address": completeAddress,
       "userAvatarUrl": imageXFile,
       "status": "approved",
     });
-    // Future<SharedPreferences> sharedPreferences = SharedPreferences.getInstance();
-    // await sharedPreferences!.setString("uid", currentUser.uid);
-    //await sharedPreferences!.setString("name", namecontroller.text.trim());
-    //await sharedPreferences!.setString("ImageUrl", usersImageUrl);
   }
 
   @override
@@ -183,30 +156,11 @@ class _SignupScreenState extends State<SignupScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
-            SizedBox(
-              height: 10,
-            ),
-            InkWell(
-              onTap: () {
-                _getImage();
-              },
-              child: CircleAvatar(
-                radius: MediaQuery.of(context).size.width * 0.20,
-                backgroundColor: Colors.white,
-                backgroundImage: imageXFile == null
-                    ? null
-                    : FileImage(File(imageXFile!.path)),
-                child: imageXFile == null
-                    ? Icon(
-                        Icons.add_photo_alternate,
-                        size: MediaQuery.of(context).size.width * 0.20,
-                        color: Colors.grey,
-                      )
-                    : null,
-              ),
-            ),
-            SizedBox(
-              height: 10,
+            Image.asset(
+              "images/Logo-white.png",
+              scale: 1,
+              width: 250,
+              height: 250,
             ),
             Form(
               key: _formkey,
@@ -235,39 +189,6 @@ class _SignupScreenState extends State<SignupScreen> {
                   hintText: "Confirm Password",
                   isObsecure: true,
                 ),
-                Customfield(
-                  data: Icons.phone,
-                  controller: phonecontroller,
-                  hintText: "Phone",
-                  isObsecure: false,
-                ),
-                Customfield(
-                  data: Icons.location_city,
-                  controller: locationcontroller,
-                  hintText: "Location",
-                  isObsecure: false,
-                ),
-                Container(
-                    width: 400,
-                    height: 50,
-                    alignment: Alignment.center,
-                    child: ElevatedButton.icon(
-                        label: Text(
-                          "Get my location",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        icon: const Icon(
-                          Icons.location_on,
-                          color: Colors.white,
-                        ),
-                        onPressed: () {
-                          getCurrentLocation();
-                        },
-                        style: ElevatedButton.styleFrom(
-                            primary: Colors.blueAccent,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ))))
               ]),
             ),
             SizedBox(

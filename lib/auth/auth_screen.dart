@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:eco_healing/auth/signup.dart';
 import 'package:eco_healing/auth/login.dart';
+import 'package:flutter/services.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({Key? key}) : super(key: key);
@@ -12,7 +15,8 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   @override
   Future<bool> _onWillPop() async {
-    return false; //<-- SEE HERE
+    SystemNavigator.pop();
+    return false;
   }
 
   Widget build(BuildContext context) {

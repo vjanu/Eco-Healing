@@ -230,24 +230,23 @@ class electronicItemScreen extends StatelessWidget {
     );
   }
 
-  void sendemail() {
-    final Uri emailLaunchUri = Uri(
-      scheme: 'mailto',
-      path: _electronicitems.email!,
-      queryParameters: {
-        'subject': 'Example Subject & Symbols are allowed!',
-      },
-    );
-    launchUrl(emailLaunchUri);
+  String? encodeQueryParameters(Map<String, String> params) {
+    return params.entries
+        .map((MapEntry<String, String> e) =>
+            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+        .join('&');
   }
 
-  void sendsms() {
-    final Uri smsLaunchUri = Uri(
-      scheme: 'sms',
-      path: '0118 999 881 999 119 7253',
-      queryParameters: <String, String>{
-        'body': Uri.encodeComponent('Example Subject & Symbols are allowed!'),
-      },
+  void sendemail() {
+    String subject =
+        "Enquiry about your post for ${_electronicitems.name} on Eco-healing App!";
+    final Uri emailLaunchUri = Uri(
+      scheme: 'mailto',
+      path: _electronicitems.email,
+      query: encodeQueryParameters(<String, String>{
+        'subject': subject,
+      }),
     );
+    launchUrl(emailLaunchUri);
   }
 }
