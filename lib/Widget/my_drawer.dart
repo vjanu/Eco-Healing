@@ -1,10 +1,12 @@
 import 'package:eco_healing/Models/user_model.dart';
 import 'package:eco_healing/Screens/Chat_screen.dart';
 import 'package:eco_healing/Widget/ChatScreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:eco_healing/global/global.dart';
 import 'package:eco_healing/auth/auth_screen.dart';
 import 'package:eco_healing/Widget/ChatScreen.dart';
+import 'package:eco_healing/global/global.dart';
 
 import '../Screens/User_Listings.dart';
 
@@ -21,15 +23,13 @@ class MyDrawer extends StatelessWidget {
             padding: const EdgeInsets.only(top: 1.0),
             child: Column(
               children: [
-                // use when implementing chat
-
                 ListTile(
                   leading: const Icon(
-                    Icons.search,
+                    Icons.snippet_folder_outlined,
                     color: Colors.black,
                   ),
                   title: const Text(
-                    "My Listing",
+                    "My Listings",
                     style: TextStyle(color: Colors.black),
                   ),
                   onTap: () {
@@ -38,15 +38,9 @@ class MyDrawer extends StatelessWidget {
                         MaterialPageRoute(builder: (c) => const myListing()));
                   },
                 ),
-                const Divider(
-                  height: 10,
-                  color: Colors.grey,
-                  thickness: 2,
-                ),
-
                 ListTile(
                   leading: const Icon(
-                    Icons.exit_to_app,
+                    Icons.logout,
                     color: Colors.black,
                   ),
                   title: const Text(
@@ -61,28 +55,6 @@ class MyDrawer extends StatelessWidget {
                               builder: (c) => const AuthScreen()));
                     });
                   },
-                ),
-
-                // ListTile(
-                //   leading: const Icon(
-                //     Icons.message,
-                //     color: Colors.black,
-                //   ),
-                //   title: const Text(
-                //     "My Listings",
-                //     style: TextStyle(color: Colors.black),
-                //   ),
-                //   onTap: () {
-                //     firebaseAuth.signOut().then((value) {
-                //       Navigator.push(context,
-                //           MaterialPageRoute(builder: (c) => const myListing()));
-                //     });
-                //   },
-                // ),
-                const Divider(
-                  height: 10,
-                  color: Colors.grey,
-                  thickness: 2,
                 ),
               ],
             ),

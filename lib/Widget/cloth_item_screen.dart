@@ -239,13 +239,22 @@ class itemScreen extends StatelessWidget {
     );
   }
 
+  String? encodeQueryParameters(Map<String, String> params) {
+    return params.entries
+        .map((MapEntry<String, String> e) =>
+            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+        .join('&');
+  }
+
   void sendemail() {
+    String subject =
+        "Enquiry about your post for ${_clothitems.name} on Eco-healing App!";
     final Uri emailLaunchUri = Uri(
       scheme: 'mailto',
-      path: _clothitems.email!,
-      queryParameters: {
-        'subject': 'Example Subject & Symbols are allowed!',
-      },
+      path: _clothitems.email,
+      query: encodeQueryParameters(<String, String>{
+        'subject': subject,
+      }),
     );
     launchUrl(emailLaunchUri);
   }
