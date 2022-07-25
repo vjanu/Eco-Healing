@@ -119,6 +119,11 @@ class _updateItemState extends State<updateItem> {
     firebase_storage.FirebaseStorage.instance
         .ref('projects/electronics/$filename')
         .putFile(file!);
+    if (filename != widget.electronicitems.filename) {
+      firebase_storage.FirebaseStorage.instance
+          .ref('projects/electronics/${widget.electronicitems.filename}')
+          .delete();
+    }
   }
 
   @override

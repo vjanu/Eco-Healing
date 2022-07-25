@@ -62,7 +62,7 @@ class _updateFoodItemState extends State<updateFoodItem> {
     Placemark pMark = placeMarks![0];
 
     completeAddress =
-    '${pMark.subThoroughfare} ${pMark.thoroughfare}, ${pMark.subLocality} ${pMark.locality}, ${pMark.subAdministrativeArea}, ${pMark.administrativeArea} ${pMark.postalCode}, ${pMark.country}';
+        '${pMark.subThoroughfare} ${pMark.thoroughfare}, ${pMark.subLocality} ${pMark.locality}, ${pMark.subAdministrativeArea}, ${pMark.administrativeArea} ${pMark.postalCode}, ${pMark.country}';
 
     addressController.text = completeAddress;
   }
@@ -120,6 +120,11 @@ class _updateFoodItemState extends State<updateFoodItem> {
     firebase_storage.FirebaseStorage.instance
         .ref('projects/food/$filename')
         .putFile(file!);
+    if (filename != widget.fooditems.filename) {
+      firebase_storage.FirebaseStorage.instance
+          .ref('projects/food/${widget.fooditems.filename}')
+          .delete();
+    }
   }
 
   @override
@@ -155,8 +160,8 @@ class _updateFoodItemState extends State<updateFoodItem> {
         appBar: AppBar(
           flexibleSpace: Container(
               decoration: const BoxDecoration(
-                color: Colors.lightGreen,
-              )),
+            color: Colors.lightGreen,
+          )),
           title: const Text("Update Food Item"),
           centerTitle: true,
           automaticallyImplyLeading: true,
@@ -252,105 +257,105 @@ class _updateFoodItemState extends State<updateFoodItem> {
   }
 
   Widget buildName() => TextFormField(
-    controller: nameController,
-    validator: (nameController) {
-      if (nameController!.isEmpty) {
-        return 'Enter the Name';
-      } else {
-        return null;
-      }
-    },
-    decoration: InputDecoration(
-        hintText: 'Name',
-        labelText: 'Item Name',
-        border: const OutlineInputBorder(),
-        suffixIcon: nameController.text.isEmpty
-            ? Container(
-          width: 0,
-        )
-            : IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => nameController.clear(),
-        )),
-    textInputAction: TextInputAction.done,
-  );
+        controller: nameController,
+        validator: (nameController) {
+          if (nameController!.isEmpty) {
+            return 'Enter the Name';
+          } else {
+            return null;
+          }
+        },
+        decoration: InputDecoration(
+            hintText: 'Name',
+            labelText: 'Item Name',
+            border: const OutlineInputBorder(),
+            suffixIcon: nameController.text.isEmpty
+                ? Container(
+                    width: 0,
+                  )
+                : IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => nameController.clear(),
+                  )),
+        textInputAction: TextInputAction.done,
+      );
   Widget buildDetails() => TextFormField(
-    controller: detailController,
-    validator: (detailController) {
-      if (detailController!.isEmpty) {
-        return 'Enter item details';
-      } else {
-        return null;
-      }
-    },
-    decoration: InputDecoration(
-        hintText: 'Details',
-        labelText: 'Item Details',
-        border: const OutlineInputBorder(),
-        suffixIcon: detailController.text.isEmpty
-            ? Container(
-          width: 0,
-        )
-            : IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => detailController.clear(),
-        )),
-    textInputAction: TextInputAction.done,
-  );
+        controller: detailController,
+        validator: (detailController) {
+          if (detailController!.isEmpty) {
+            return 'Enter item details';
+          } else {
+            return null;
+          }
+        },
+        decoration: InputDecoration(
+            hintText: 'Details',
+            labelText: 'Item Details',
+            border: const OutlineInputBorder(),
+            suffixIcon: detailController.text.isEmpty
+                ? Container(
+                    width: 0,
+                  )
+                : IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => detailController.clear(),
+                  )),
+        textInputAction: TextInputAction.done,
+      );
 
   Widget buildAddress() => TextFormField(
-    controller: addressController,
-    validator: (addresscontroller) {
-      if (addresscontroller!.isEmpty) {
-        return 'Enter the Address';
-      } else {
-        return null;
-      }
-    },
-    decoration: InputDecoration(
-        hintText: 'Address',
-        labelText: 'Address',
-        border: const OutlineInputBorder(),
-        suffixIcon: addressController.text.isEmpty
-            ? Container(width: 0)
-            : IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => addressController.clear(),
-        )),
-    textInputAction: TextInputAction.done,
-  );
+        controller: addressController,
+        validator: (addresscontroller) {
+          if (addresscontroller!.isEmpty) {
+            return 'Enter the Address';
+          } else {
+            return null;
+          }
+        },
+        decoration: InputDecoration(
+            hintText: 'Address',
+            labelText: 'Address',
+            border: const OutlineInputBorder(),
+            suffixIcon: addressController.text.isEmpty
+                ? Container(width: 0)
+                : IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => addressController.clear(),
+                  )),
+        textInputAction: TextInputAction.done,
+      );
 
   Widget buildCost() => TextFormField(
-    controller: costController,
-    validator: (costController) {
-      if (costController!.isEmpty) {
-        return 'Enter the Project Cost';
-      } else {
-        return null;
-      }
-    },
-    decoration: InputDecoration(
-        hintText: 'Project Cost',
-        labelText: 'Cost',
-        prefixIcon: const Icon(
-          Icons.attach_money,
-        ),
-        border: const OutlineInputBorder(),
-        suffixIcon: costController.text.isEmpty
-            ? Container(
-          width: 0,
-        )
-            : IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => costController.clear(),
-        )),
-    textInputAction: TextInputAction.done,
-    keyboardType: TextInputType.number,
-  );
+        controller: costController,
+        validator: (costController) {
+          if (costController!.isEmpty) {
+            return 'Enter the Project Cost';
+          } else {
+            return null;
+          }
+        },
+        decoration: InputDecoration(
+            hintText: 'Project Cost',
+            labelText: 'Cost',
+            prefixIcon: const Icon(
+              Icons.attach_money,
+            ),
+            border: const OutlineInputBorder(),
+            suffixIcon: costController.text.isEmpty
+                ? Container(
+                    width: 0,
+                  )
+                : IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => costController.clear(),
+                  )),
+        textInputAction: TextInputAction.done,
+        keyboardType: TextInputType.number,
+      );
   Widget UploadPicture() => ElevatedButton(
-    onPressed: () {
-      getImageData();
-    },
-    child: Text('Upload Image'),
-  );
+        onPressed: () {
+          getImageData();
+        },
+        child: Text('Upload Image'),
+      );
 }
